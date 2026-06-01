@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import os, shutil, tempfile
 from app.database import get_db
@@ -11,6 +12,16 @@ from app.core.config import settings
 
 router   = APIRouter(prefix="/exercise", tags=["Exercise Analysis"])
 security = HTTPBearer()
+
+
+class LiveFeedbackRequest(BaseModel):
+    exercise_name: str = "exercise"
+    total_reps: int = 0
+    good_reps: int = 0
+    bad_reps: int = 0
+    min_angle: float = 0
+    max_angle: float = 0
+    range_of_motion: float = 0
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
@@ -74,20 +85,31 @@ def get_audio(filename: str):
 # ── Live Camera Feedback ──────────────────────────────────────
 @router.post("/live-feedback")
 async def live_feedback(
-    data:         dict,
+    data:         LiveFeedbackRequest,
     db:           Session = Depends(get_db),
     current_user: User    = Depends(get_current_user)
 ):
-    exercise_name   = data.get("exercise_name", "exercise")
-    total_reps      = data.get("total_reps", 0)
-    min_angle       = data.get("min_angle", 0)
-    max_angle       = data.get("max_angle", 0)
-    range_of_motion = data.get("range_of_motion", 0)
+    exercise_name   = data.exercise_name
+    total_reps      = data.total_reps
+    good_reps       = data.good_reps
+    bad_reps        = data.bad_reps
+    min_angle       = data.min_angle
+    max_angle       = data.max_angle
+    range_of_motion = data.range_of_motion
+
+    if total_reps > 0 and good_reps == 0 and bad_reps == 0:
+        good_reps = total_reps
+
+    supported_names = {exercise["name"] for exercise in get_all_exercises()}
+    if exercise_name not in supported_names:
+        raise HTTPException(status_code=400, detail=f"Exercise '{exercise_name}' not found")
 
     if total_reps == 0:
         return {
             "exercise_name":   exercise_name,
             "total_reps":      0,
+            "good_reps":       good_reps,
+            "bad_reps":        bad_reps,
             "min_angle":       min_angle,
             "max_angle":       max_angle,
             "range_of_motion": range_of_motion,
@@ -123,6 +145,8 @@ async def live_feedback(
     return {
         "exercise_name":   exercise_name,
         "total_reps":      total_reps,
+        "good_reps":       good_reps,
+        "bad_reps":        bad_reps,
         "min_angle":       min_angle,
         "max_angle":       max_angle,
         "range_of_motion": range_of_motion,

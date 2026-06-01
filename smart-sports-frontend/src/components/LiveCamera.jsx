@@ -15,7 +15,10 @@ function getTorsoLean([sx, sy], [hx, hy]) {
 // ── Exercise configs ──────────────────────────────────────────
 const EXERCISES = {
   bicep_curl: {
-    label: "Bicep Curl", downAngle: 145, upAngle: 55,
+    label: "Bicep Curl",
+    upAngle: 40,
+    downAngle: 150,
+    type: "curl",
     getAngle: (lm) => (
       calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
       calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
@@ -30,7 +33,10 @@ const EXERCISES = {
     ) / 2,
   },
   shoulder_press: {
-    label: "Shoulder Press", downAngle: 90, upAngle: 160,
+    label: "Shoulder Press",
+    upAngle: 160,
+    downAngle: 90,
+    type: "press_up",
     getAngle: (lm) => (
       calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
       calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
@@ -39,7 +45,10 @@ const EXERCISES = {
     getSway: (lm) => getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]),
   },
   squats: {
-    label: "Squats", downAngle: 90, upAngle: 160,
+    label: "Squats",
+    upAngle: 160,
+    downAngle: 80,
+    type: "squat",
     getAngle: (lm) => (
       calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
       calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
@@ -47,7 +56,10 @@ const EXERCISES = {
     getDrift: () => 0, getSway: () => 0,
   },
   pushups: {
-    label: "Push-ups", downAngle: 90, upAngle: 160,
+    label: "Push-ups",
+    upAngle: 160,
+    downAngle: 80,
+    type: "press_up",
     getAngle: (lm) => (
       calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
       calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
@@ -55,7 +67,10 @@ const EXERCISES = {
     getDrift: () => 0, getSway: () => 0,
   },
   leg_lunge: {
-    label: "Leg Lunge", downAngle: 90, upAngle: 160,
+    label: "Leg Lunge",
+    upAngle: 165,
+    downAngle: 95,
+    type: "squat",
     getAngle: (lm) => (
       calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
       calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
@@ -63,10 +78,178 @@ const EXERCISES = {
     getDrift: () => 0, getSway: () => 0,
   },
   leg_extension: {
-    label: "Leg Extension", downAngle: 90, upAngle: 160,
+    label: "Leg Extension",
+    upAngle: 160,
+    downAngle: 100,
+    type: "squat",
     getAngle: (lm) => (
       calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
       calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  bodyweight_squats: {
+    label: "Bodyweight Squats",
+    upAngle: 120,
+    downAngle: 60,
+    type: "squat",
+    getAngle: (lm) => (
+      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
+      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  lunge: {
+    label: "Lunge",
+    upAngle: 140,
+    downAngle: 85,
+    type: "squat",
+    getAngle: (lm) => (
+      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
+      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  high_knee: {
+    label: "High Knee",
+    upAngle: 80,
+    downAngle: 160,
+    type: "kick",
+    getAngle: (lm) => (
+      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
+      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  butt_kicks: {
+    label: "Butt Kicks",
+    upAngle: 60,
+    downAngle: 150,
+    type: "kick",
+    getAngle: (lm) => (
+      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
+      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  arm_abduction: {
+    label: "Arm Abduction",
+    upAngle: 80,
+    downAngle: 20,
+    type: "raise",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  shoulder_flexion: {
+    label: "Shoulder Flexion",
+    upAngle: 90,
+    downAngle: 10,
+    type: "raise",
+    getAngle: (lm) => (
+      calcAngle([lm[23].x, lm[23].y], [lm[11].x, lm[11].y], [lm[13].x, lm[13].y]) +
+      calcAngle([lm[24].x, lm[24].y], [lm[12].x, lm[12].y], [lm[14].x, lm[14].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  jumping_jacks: {
+    label: "Jumping Jacks",
+    upAngle: 140,
+    downAngle: 30,
+    type: "raise",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  lat_pulldown: {
+    label: "Lat Pulldown",
+    upAngle: 150,
+    downAngle: 60,
+    type: "curl",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  triceps_pushdown: {
+    label: "Triceps Pushdown",
+    upAngle: 160,
+    downAngle: 40,
+    type: "press_up",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  bench_press: {
+    label: "Bench Press",
+    upAngle: 150,
+    downAngle: 80,
+    type: "press_up",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  leg_swing: {
+    label: "Leg Swing",
+    upAngle: 80,
+    downAngle: 10,
+    type: "raise",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[23].x, lm[23].y], [lm[25].x, lm[25].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[24].x, lm[24].y], [lm[26].x, lm[26].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  leg_abduction: {
+    label: "Leg Abduction",
+    upAngle: 30,
+    downAngle: 5,
+    type: "raise",
+    getAngle: (lm) => (
+      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[24].x, lm[24].y]) +
+      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[23].x, lm[23].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  arm_circles: {
+    label: "Arm Circles",
+    upAngle: 40,
+    downAngle: 130,
+    type: "curl",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  arm_half_circles: {
+    label: "Arm Half Circles",
+    upAngle: 60,
+    downAngle: 100,
+    type: "curl",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
+    ) / 2,
+    getDrift: () => 0, getSway: () => 0,
+  },
+  arm_vw: {
+    label: "Arm VW",
+    upAngle: 120,
+    downAngle: 60,
+    type: "raise",
+    getAngle: (lm) => (
+      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
+      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
     ) / 2,
     getDrift: () => 0, getSway: () => 0,
   },
@@ -78,18 +261,69 @@ const CONNECTIONS = [
   [25, 27], [26, 28],
 ];
 
+const MOVENET_KEYPOINTS = [
+  "nose", "left_eye", "right_eye", "left_ear", "right_ear",
+  "left_shoulder", "right_shoulder", "left_elbow", "right_elbow",
+  "left_wrist", "right_wrist", "left_hip", "right_hip",
+  "left_knee", "right_knee", "left_ankle", "right_ankle",
+];
+
+const MOVENET_TO_MEDIAPIPE = {
+  left_shoulder: 11,
+  right_shoulder: 12,
+  left_elbow: 13,
+  right_elbow: 14,
+  left_wrist: 15,
+  right_wrist: 16,
+  left_hip: 23,
+  right_hip: 24,
+  left_knee: 25,
+  right_knee: 26,
+  left_ankle: 27,
+  right_ankle: 28,
+};
+
+const LOWER_BODY_EXERCISES = new Set([
+  "squats", "bodyweight_squats", "leg_lunge", "lunge", "leg_abduction",
+  "high_knee", "butt_kicks", "leg_extension", "leg_swing",
+]);
+
+function mapMoveNetToMediaPipe(keypoints, width, height) {
+  const landmarks = Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }));
+
+  keypoints.forEach((kp, index) => {
+    const name = kp.name || kp.part || MOVENET_KEYPOINTS[index];
+    const mediaPipeIndex = MOVENET_TO_MEDIAPIPE[name];
+    if (mediaPipeIndex === undefined) return;
+
+    landmarks[mediaPipeIndex] = {
+      x: kp.x / width,
+      y: kp.y / height,
+      visibility: kp.score ?? 0,
+    };
+  });
+
+  return landmarks;
+}
+
+function hasVisiblePoints(landmarks, indexes, minScore = 0.2) {
+  return indexes.every(index => (landmarks[index]?.visibility || 0) >= minScore);
+}
+
 export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
   const videoRef    = useRef(null);
   const canvasRef   = useRef(null);
   const animRef     = useRef(null);
   const detectorRef = useRef(null);
   const streamRef   = useRef(null);
+  const pausedRef   = useRef(false);
   const stateRef    = useRef({
     stage: "waiting", goodReps: 0, badReps: 0,
-    currentRepForm: "Good", angles: [],
+    currentRepForm: "Good", angles: [], lastRepTime: null,
   });
 
   const [active,          setActive]          = useState(false);
+  const [paused,          setPaused]          = useState(false);
   const [countdown,       setCountdown]       = useState(null);
   const [loading,         setLoading]         = useState(false);
   const [error,           setError]           = useState("");
@@ -101,6 +335,8 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
 
   // ── Detection loop ────────────────────────────────────────────
   const detectLoop = useCallback(async () => {
+    if (pausedRef.current) return;
+
     const video  = videoRef.current;
     const canvas = canvasRef.current;
     const detector = detectorRef.current;
@@ -127,11 +363,7 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
         const keypoints = poses[0].keypoints;
 
         // تحويل الـ keypoints لـ format بيستخدمه الكود
-        const lm = keypoints.map(kp => ({
-          x: kp.x / W,
-          y: kp.y / H,
-          visibility: kp.score || 0,
-        }));
+        const lm = mapMoveNetToMediaPipe(keypoints, W, H);
 
         // رسم الـ skeleton
         ctx.strokeStyle = "rgba(249,115,22,0.85)";
@@ -157,45 +389,121 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
         const currentEx = EXERCISES[selectedExercise] || EXERCISES.bicep_curl;
 
         try {
-          const avgAngle = currentEx.getAngle(lm);
-          const avgDrift = currentEx.getDrift(lm);
-          const avgSway  = currentEx.getSway(lm);
+          const requiredPoints = LOWER_BODY_EXERCISES.has(selectedExercise)
+            ? [23, 25, 27, 24, 26, 28]
+            : [11, 13, 15, 12, 14, 16];
 
-          s.angles.push(avgAngle);
-
-          let warning = "";
-          if (avgSway > 15 || avgDrift > 30) {
-            warning = "CHEATING!";
-            if (s.currentRepForm === "Good") s.currentRepForm = "Bad";
+          if (!hasVisiblePoints(lm, requiredPoints)) {
+            setDisplay(prev => ({ ...prev, warning: "Keep your full body visible" }));
+            throw new Error("Required exercise joints are not visible");
           }
 
-          if (avgAngle > currentEx.downAngle) {
-            if (s.stage === "up") {
-              if (s.currentRepForm === "Good") s.goodReps++;
-              else s.badReps++;
-              s.stage = "down";
-              s.currentRepForm = "Good";
-            } else if (s.stage === "waiting") {
+          const avgAngle = currentEx.getAngle(lm);
+
+          s.angles.push(avgAngle);
+          if (s.angles.length > 8) s.angles.shift();
+          const smoothed = s.angles.reduce((a, b) => a + b, 0) / s.angles.length;
+
+          const now = Date.now();
+          const MIN_REP_GAP_MS = 1000;
+          const upTh = currentEx.upAngle;
+          const downTh = currentEx.downAngle;
+          const exType = currentEx.type || "curl";
+
+          let warning = "";
+          if (exType === "curl") {
+            if (smoothed < upTh) {
+              s.stage = "up";
+            } else if (smoothed > downTh && s.stage === "up") {
+              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                if (s.currentRepForm === "Good") s.goodReps++;
+                else { s.badReps++; warning = "BAD FORM!"; }
+                s.lastRepTime = now;
+                s.currentRepForm = "Good";
+              }
               s.stage = "down";
             }
           }
-          if (avgAngle < currentEx.upAngle && s.stage === "down") s.stage = "up";
+
+          else if (exType === "press_up") {
+            if (smoothed < downTh) {
+              s.stage = "down";
+            } else if (smoothed > upTh && s.stage === "down") {
+              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                if (s.currentRepForm === "Good") s.goodReps++;
+                else { s.badReps++; warning = "BAD FORM!"; }
+                s.lastRepTime = now;
+                s.currentRepForm = "Good";
+              }
+              s.stage = "up";
+            }
+          }
+
+          else if (exType === "squat") {
+            if (smoothed < downTh) {
+              s.stage = "down";
+            } else if (smoothed > upTh && s.stage === "down") {
+              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                if (s.currentRepForm === "Good") s.goodReps++;
+                else { s.badReps++; warning = "BAD FORM!"; }
+                s.lastRepTime = now;
+                s.currentRepForm = "Good";
+              }
+              s.stage = "up";
+            }
+          }
+
+          else if (exType === "raise") {
+            if (smoothed > upTh) {
+              s.stage = "up";
+            } else if (smoothed < downTh && s.stage === "up") {
+              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                if (s.currentRepForm === "Good") s.goodReps++;
+                else { s.badReps++; warning = "BAD FORM!"; }
+                s.lastRepTime = now;
+                s.currentRepForm = "Good";
+              }
+              s.stage = "down";
+            }
+          }
+
+          else if (exType === "kick") {
+            if (smoothed < upTh) {
+              s.stage = "up";
+            } else if (smoothed > downTh && s.stage === "up") {
+              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                if (s.currentRepForm === "Good") s.goodReps++;
+                else { s.badReps++; warning = "BAD FORM!"; }
+                s.lastRepTime = now;
+                s.currentRepForm = "Good";
+              }
+              s.stage = "down";
+            }
+          }
+
+          const avgDrift = currentEx.getDrift ? currentEx.getDrift(lm) : 0;
+          const avgSway  = currentEx.getSway  ? currentEx.getSway(lm)  : 0;
+          if (avgSway > 15 || avgDrift > 30) {
+            warning = "CHEATING!";
+            s.currentRepForm = "Bad";
+          }
 
           // رسم الـ HUD
           ctx.fillStyle = "rgba(0,0,0,0.6)";
           ctx.fillRect(0, 0, 215, 115);
           [
+            [`Total: ${s.goodReps + s.badReps}`, "#ffffff"],
             [`Good: ${s.goodReps}`, "#4ade80"],
             [`Bad:  ${s.badReps}`, "#f87171"],
             [`Stage: ${s.stage}`, "#ffffff"],
-            [`Angle: ${Math.round(avgAngle)}`, "#60a5fa"],
+            [`Angle: ${Math.round(smoothed)}`, "#60a5fa"],
           ].forEach(([t, c], i) => {
             ctx.fillStyle = c;
             ctx.font = "bold 14px monospace";
             ctx.fillText(t, 10, 24 + i * 22);
           });
 
-          setDisplay({ goodReps: s.goodReps, badReps: s.badReps, stage: s.stage, angle: Math.round(avgAngle), warning });
+          setDisplay({ goodReps: s.goodReps, badReps: s.badReps, stage: s.stage, angle: Math.round(smoothed), warning });
         } catch (e) {
           // لو مش قادر يحسب الزاوية (keypoints مش واضحين)
         }
@@ -209,10 +517,12 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
 
   // ── Start ─────────────────────────────────────────────────────
   const startCamera = useCallback(async () => {
-    setError(""); setLoading(true); setFeedback(null);
+    pausedRef.current = false;
+    setError(""); setLoading(true); setFeedback(null); setPaused(false);
     try {
       // ✅ نستخدم @tensorflow-models/pose-detection بدل MediaPipe القديم
       await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core");
+      await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter");
       await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl");
       await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection");
 
@@ -222,6 +532,10 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
       // ✅ initialize الـ WebGL backend
       await window.tf.setBackend("webgl");
       await window.tf.ready();
+
+      if (typeof window.tf.loadGraphModel !== "function") {
+        throw new Error("TensorFlow graph model loader did not initialize. Refresh the page and try again.");
+      }
 
       // ✅ إنشاء الـ detector باستخدام MoveNet (أسرع وأستقر)
       const detector = await window.poseDetection.createDetector(
@@ -233,7 +547,8 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
       detectorRef.current = detector;
 
       // تشغيل الكاميرا
-      stateRef.current = { stage: "waiting", goodReps: 0, badReps: 0, currentRepForm: "Good", angles: [] };
+      stateRef.current = { stage: "waiting", goodReps: 0, badReps: 0, currentRepForm: "Good", angles: [], lastRepTime: null };
+      setDisplay({ goodReps: 0, badReps: 0, stage: "waiting", angle: 0, warning: "" });
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: 640, height: 480, facingMode: "user" }, audio: false,
@@ -265,10 +580,31 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
     }
   }, [detectLoop]);
 
-  // ── Stop + Get Feedback ───────────────────────────────────────
-  const stopCamera = useCallback(async () => {
+  const resetSession = useCallback(() => {
+    stateRef.current = { stage: "waiting", goodReps: 0, badReps: 0, currentRepForm: "Good", angles: [], lastRepTime: null };
+    setDisplay({ goodReps: 0, badReps: 0, stage: "waiting", angle: 0, warning: "" });
+    setFeedback(null);
+    setError("");
+  }, []);
+
+  const pauseCamera = useCallback(() => {
+    pausedRef.current = true;
     if (animRef.current) cancelAnimationFrame(animRef.current);
     animRef.current = null;
+    setPaused(true);
+  }, []);
+
+  const resumeCamera = useCallback(() => {
+    pausedRef.current = false;
+    setPaused(false);
+    if (!animRef.current) animRef.current = requestAnimationFrame(detectLoop);
+  }, [detectLoop]);
+
+  // ── Stop + Get Feedback ───────────────────────────────────────
+  const stopCamera = useCallback(async ({ skipFeedback = false } = {}) => {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    animRef.current = null;
+    pausedRef.current = false;
 
     streamRef.current?.getTracks().forEach(t => t.stop());
     streamRef.current = null;
@@ -277,11 +613,11 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
     detectorRef.current?.dispose?.();
     detectorRef.current = null;
 
-    setActive(false); setCountdown(null);
+    setActive(false); setPaused(false); setCountdown(null);
 
     const s = stateRef.current;
     const totalReps = s.goodReps + s.badReps;
-    if (totalReps === 0) return;
+    if (skipFeedback) return;
 
     const angles = s.angles;
     const minAngle = angles.length ? Math.min(...angles) : 0;
@@ -305,6 +641,7 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
           range_of_motion: Math.round(maxAngle - minAngle),
         }),
       });
+      if (!response.ok) throw new Error("Live feedback request failed");
       const data = await response.json();
       setFeedback(data);
 
@@ -322,12 +659,10 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
   }, [selectedExercise, token]);
 
   useEffect(() => {
-    stateRef.current = { stage: "waiting", goodReps: 0, badReps: 0, currentRepForm: "Good", angles: [] };
-    setDisplay({ goodReps: 0, badReps: 0, stage: "waiting", angle: 0, warning: "" });
-    setFeedback(null);
-  }, [selectedExercise]);
+    resetSession();
+  }, [selectedExercise, resetSession]);
 
-  useEffect(() => () => { stopCamera(); }, []);
+  useEffect(() => () => { stopCamera({ skipFeedback: true }); }, [stopCamera]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -382,14 +717,25 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
                 {display.warning}
               </div>
             )}
+            {paused && (
+              <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.6)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            flexDirection: "column", gap: 8 }}>
+                <div style={{ color: "white", fontWeight: 800, fontSize: "1rem" }}>Session Paused</div>
+                <div style={{ color: "rgba(255,255,255,.75)", fontSize: ".8rem" }}>
+                  Good: {display.goodReps} | Bad: {display.badReps}
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
 
       {/* Stats */}
-      {active && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: ".75rem" }}>
+      {(active || feedback) && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(95px, 1fr))", gap: ".75rem" }}>
           {[
+            { label: "Total Reps", value: display.goodReps + display.badReps, color: "#1e293b" },
             { label: "Good Reps", value: display.goodReps, color: "#16a34a" },
             { label: "Bad Reps",  value: display.badReps,  color: "#dc2626" },
             { label: "Angle",     value: `${display.angle}`, color: "#2563eb" },
@@ -404,19 +750,20 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
       )}
 
       {/* Controls */}
-      <div style={{ display: "flex", gap: ".75rem" }}>
+      <div style={{ display: "flex", gap: ".75rem", flexWrap: "wrap" }}>
         {!active && countdown === null ? (
           <button onClick={startCamera} disabled={loading} style={btn("#2563eb", loading)}>
             {loading ? "Loading AI..." : "Start Live Analysis"}
           </button>
         ) : active ? (
           <>
-            <button onClick={stopCamera} style={btn("#ef4444")}>Stop & Get Feedback</button>
-            <button onClick={() => {
-              stateRef.current = { stage: "waiting", goodReps: 0, badReps: 0, currentRepForm: "Good", angles: [] };
-              setDisplay({ goodReps: 0, badReps: 0, stage: "waiting", angle: 0, warning: "" });
-              setFeedback(null);
-            }} style={btn("#64748b")}>Reset</button>
+            {!paused ? (
+              <button onClick={pauseCamera} style={btn("#f97316")}>Pause</button>
+            ) : (
+              <button onClick={resumeCamera} style={btn("#10b981")}>Resume</button>
+            )}
+            <button onClick={() => stopCamera()} style={btn("#ef4444")}>Stop & Get Feedback</button>
+            <button onClick={resetSession} style={btn("#64748b")}>Reset</button>
           </>
         ) : null}
       </div>
@@ -430,16 +777,19 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
 
       {feedback && (
         <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 12, padding: "1.25rem" }}>
-          <h4 style={{ margin: "0 0 1rem", color: "#1e293b" }}>Coach Feedback</h4>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: ".75rem", marginBottom: "1rem" }}>
+          <h4 style={{ margin: "0 0 1rem", color: "#1e293b" }}>Session Results</h4>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: ".75rem", marginBottom: "1rem" }}>
             {[
-              { label: "Total Reps", value: feedback.total_reps },
-              { label: "Min Angle",  value: `${feedback.min_angle}` },
-              { label: "Max Angle",  value: `${feedback.max_angle}` },
+              { label: "Total Reps", value: feedback.total_reps, color: "#2563eb" },
+              { label: "Good Reps", value: feedback.good_reps ?? display.goodReps, color: "#10b981" },
+              { label: "Bad Reps", value: feedback.bad_reps ?? display.badReps, color: "#ef4444" },
+              { label: "Min Angle", value: `${feedback.min_angle}°`, color: "#f97316" },
+              { label: "Max Angle", value: `${feedback.max_angle}°`, color: "#8b5cf6" },
+              { label: "Range", value: `${feedback.range_of_motion}°`, color: "#06b6d4" },
             ].map(s => (
               <div key={s.label} style={{ background: "white", borderRadius: 8, padding: ".75rem", textAlign: "center", border: "1px solid #e2e8f0" }}>
                 <div style={{ fontSize: ".65rem", color: "#94a3b8", fontWeight: 600 }}>{s.label}</div>
-                <div style={{ fontSize: "1.2rem", fontWeight: 800, color: "#1e293b" }}>{s.value}</div>
+                <div style={{ fontSize: "1.2rem", fontWeight: 800, color: s.color }}>{s.value}</div>
               </div>
             ))}
           </div>
@@ -454,6 +804,12 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
                 style={{ width: "100%" }} />
             </div>
           )}
+          <button onClick={resetSession}
+            style={{ marginTop: "1rem", width: "100%", padding: ".65rem", borderRadius: 8,
+                     background: "#2563eb", color: "white", border: "none", fontWeight: 700,
+                     fontSize: ".82rem", cursor: "pointer", fontFamily: "inherit" }}>
+            Start New Session
+          </button>
         </div>
       )}
 

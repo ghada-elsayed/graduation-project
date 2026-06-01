@@ -371,9 +371,11 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { getMyPlan } from "../services/api";
+import LiveCamera from '../components/LiveCamera';
 
 export default function ExerciseCoach() {
-  const [exerciseName, setExerciseName]         = useState(null);
+  const [exerciseName, setExerciseName]         = useState("bicep_curl");
+  const [mode, setMode]                         = useState("upload");
   const [demoError, setDemoError]               = useState(false);
   const [videoFile, setVideoFile]               = useState(null);
   const [previewUrl, setPreviewUrl]             = useState(null);
@@ -386,6 +388,7 @@ export default function ExerciseCoach() {
   const [selectedDay, setSelectedDay]           = useState(null);
   const [planExpired, setPlanExpired]           = useState(false);
   const [planExpiresAt, setPlanExpiresAt]       = useState(null);
+  const [backendExercises, setBackendExercises] = useState([]);
 
   const selectedDayPlan = weeklyPlan?.find(d => d.day === selectedDay);
   const token           = localStorage.getItem("token");
@@ -408,12 +411,25 @@ export default function ExerciseCoach() {
       .catch(() => setWeeklyPlan(null));
 
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
       if (poseInstanceRef.current) {
         poseInstanceRef.current.close();
         poseInstanceRef.current = null;
       }
     };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/exercise/exercises-list")
+      .then(res => {
+        if (Array.isArray(res.data)) setBackendExercises(res.data);
+      })
+      .catch(() => setBackendExercises([]));
   }, []);
 
   const toggleCheck = (day, exName) => {
@@ -461,8 +477,13 @@ export default function ExerciseCoach() {
     ["high_knee","High Knee"],["butt_kicks","Butt Kicks"],
     ["jumping_jacks","Jumping Jacks"],["leg_extension","Leg Extension"],
     ["arm_circles","Arm Circles"],["arm_half_circles","Arm Half Circles"],
-    ["arm_VW","Arm VW"],["leg_swing","leg Swing"],["triceps_pushdown","Triceps Pushdown"],
+    ["arm_vw","Arm VW"],["leg_swing","Leg Swing"],["triceps_pushdown","Triceps Pushdown"],
   ];
+
+  const titleize = value => value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const exerciseOptions = backendExercises.length
+    ? backendExercises.map(ex => [ex.name, ex.description || titleize(ex.name)])
+    : exercises;
 
   return (
     <div style={{ minHeight:"100vh", background:"#f5f7fa", fontFamily:"Segoe UI,sans-serif" }}>
@@ -477,6 +498,9 @@ export default function ExerciseCoach() {
         .ex-row.done { background:#f0fdf4; border-color:#86efac; }
         .checkbox { width:20px; height:20px; border-radius:5px; border:2px solid #cbd5e1; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; background:white; }
         .checkbox.checked { background:#10b981; border-color:#10b981; color:white; }
+        .mode-tabs { display:flex; gap:.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+        .mode-tab { padding:.45rem 1rem; border-radius:8px; border:1.5px solid #e2eaf2; background:white; color:#64748b; font-weight:600; font-size:.78rem; cursor:pointer; font-family:inherit; }
+        .mode-tab.on { background:#2563eb; border-color:#2563eb; color:white; }
         @media (max-width:780px){
           .split{
           display:flex !important;
@@ -531,7 +555,7 @@ export default function ExerciseCoach() {
                       const exKey  = ex.name.toLowerCase().replace(/\s+/g, '_');
                       return (
                         <div key={i} className={"ex-row" + (isDone?" done":"")}
-                          onClick={() => { toggleCheck(selectedDay, ex.name); setExerciseName(exKey); setDemoError(false); }}
+                          onClick={() => { toggleCheck(selectedDay, ex.name); setExerciseName(exKey); setMode("live"); setDemoError(false); }}
                         >
                           <div className={"checkbox" + (isDone?" checked":"")}>{isDone && "✓"}</div>
                           <div style={{ flex:1 }}>
@@ -593,13 +617,21 @@ export default function ExerciseCoach() {
           <div className="card" style={{ marginBottom:"1.25rem" }}>
             <h3 style={{ fontWeight:700, fontSize:".92rem", color:"#1a2332", marginBottom:"1rem" }}>🎥 Analyze Your Exercise</h3>
 
+            <div className="mode-tabs">
+              {[["upload", "Upload Video"], ["live", "Live Camera"]].map(([id, label]) => (
+                <button key={id} type="button" className={"mode-tab" + (mode === id ? " on" : "")} onClick={() => setMode(id)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
             {/* Select exercise */}
             <div style={{ marginBottom:"1rem" }}>
               <label style={{ fontSize:".75rem", fontWeight:600, color:"#475569", display:"block", marginBottom:".35rem" }}>Select Exercise</label>
               <select value={exerciseName} onChange={e => { setExerciseName(e.target.value); setDemoError(false); }}
                 style={{ width:"100%", padding:".6rem .9rem", border:"1.5px solid #e2eaf2", borderRadius:8, fontSize:".85rem", background:"white", color:"#1a2332", outline:"none" }}
               >
-                {exercises.map(([v,l]) => <option key={v} value={v}>{l}</option>)}
+                {exerciseOptions.map(([v,l]) => <option key={v} value={v}>{l}</option>)}
               </select>
             </div>
 
@@ -621,6 +653,11 @@ export default function ExerciseCoach() {
               )}
             </div>
 
+            {mode === "live" && (
+              <LiveCamera selectedExercise={exerciseName || "bicep_curl"} token={token} />
+            )}
+
+            <div style={{ display: mode === "upload" ? "block" : "none" }}>
             {/* Upload */}
             <div style={{ marginBottom:"1rem" }}>
               <label style={{ fontSize:".75rem", fontWeight:600, color:"#475569", display:"block", marginBottom:".35rem" }}>Upload Your Video</label>
@@ -638,12 +675,13 @@ export default function ExerciseCoach() {
             >
               {loading ? "⏳ Analyzing..." : "🔍 Analyze Exercise"}
             </button>
+            </div>
 
             {error && <p style={{ color:"#ef4444", marginTop:".75rem", fontSize:".78rem" }}>{error}</p>}
           </div>
 
           {/* Result */}
-          {result && (
+          {mode === "upload" && result && (
             <div className="card">
               <h4 style={{ fontWeight:700, fontSize:".88rem", color:"#1a2332", marginBottom:"1rem" }}>
                 📊 {result.exercise_name?.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())} — Results
