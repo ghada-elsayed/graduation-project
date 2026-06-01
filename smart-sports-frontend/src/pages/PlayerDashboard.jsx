@@ -953,11 +953,18 @@ function NutritionSection({ plan, navigate }) {
 }
 
 
-const LS_KEY = "playerDashboardCache";
+function getCacheKey() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.id ? `playerDashboardCache_${user.id}` : 'playerDashboardCache_guest';
+  } catch {
+    return 'playerDashboardCache_guest';
+  }
+}
 
 function loadCache() {
   try {
-    const raw = localStorage.getItem(LS_KEY);
+    const raw = localStorage.getItem(getCacheKey());
     return raw ? JSON.parse(raw) : {};
   } catch { return {}; }
 }
@@ -965,7 +972,7 @@ function loadCache() {
 function saveCache(patch) {
   try {
     const prev = loadCache();
-    localStorage.setItem(LS_KEY, JSON.stringify({ ...prev, ...patch }));
+    localStorage.setItem(getCacheKey(), JSON.stringify({ ...prev, ...patch }));
   } catch {}
 }
 
