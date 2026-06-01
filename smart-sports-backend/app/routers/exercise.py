@@ -1,0 +1,131 @@
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
+import os, shutil, tempfile
+from app.database import get_db
+from app.core.security import decode_token
+from app.models.user import User
+from app.services.exercise_analysis_service import analyze_exercise_video, get_all_exercises, get_ai_voice_feedback
+from app.core.config import settings
+
+router   = APIRouter(prefix="/exercise", tags=["Exercise Analysis"])
+security = HTTPBearer()
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    payload = decode_token(credentials.credentials)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user = db.query(User).filter(User.id == int(payload.get("sub"))).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
+
+@router.get("/exercises-list")
+def list_exercises():
+    return get_all_exercises()
+
+@router.post("/analyze")
+async def analyze_exercise(
+    file:          UploadFile = File(...),
+    exercise_name: str        = Form(...),
+    db:            Session    = Depends(get_db),
+    current_user:  User       = Depends(get_current_user)
+):
+    if not file.filename.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')):
+        raise HTTPException(status_code=400, detail="Only video files allowed")
+
+    tmp_dir  = tempfile.mkdtemp()
+    tmp_path = os.path.join(tmp_dir, file.filename)
+    try:
+        with open(tmp_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        result = analyze_exercise_video(
+            video_path    = tmp_path,
+            exercise_name = exercise_name,
+            groq_api_key  = settings.GROQ_API_KEY,
+            output_dir    = tmp_dir,
+        )
+        if result.get("audio_path") and os.path.exists(result["audio_path"]):
+            audio_dir  = "uploads/audio"
+            os.makedirs(audio_dir, exist_ok=True)
+            audio_dest = os.path.join(audio_dir, f"{current_user.id}_{exercise_name}.mp3")
+            shutil.copy(result["audio_path"], audio_dest)
+            result["audio_url"] = f"/exercise/audio/{current_user.id}_{exercise_name}.mp3"
+        else:
+            result["audio_url"] = None
+        result.pop("audio_path", None)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+@router.get("/audio/{filename}")
+def get_audio(filename: str):
+    path = f"uploads/audio/{filename}"
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Audio not found")
+    return FileResponse(path, media_type="audio/mpeg")
+
+# ── Live Camera Feedback ──────────────────────────────────────
+@router.post("/live-feedback")
+async def live_feedback(
+    data:         dict,
+    db:           Session = Depends(get_db),
+    current_user: User    = Depends(get_current_user)
+):
+    exercise_name   = data.get("exercise_name", "exercise")
+    total_reps      = data.get("total_reps", 0)
+    min_angle       = data.get("min_angle", 0)
+    max_angle       = data.get("max_angle", 0)
+    range_of_motion = data.get("range_of_motion", 0)
+
+    if total_reps == 0:
+        return {
+            "exercise_name":   exercise_name,
+            "total_reps":      0,
+            "min_angle":       min_angle,
+            "max_angle":       max_angle,
+            "range_of_motion": range_of_motion,
+            "ai_feedback":     "No repetitions detected. Try again!",
+            "audio_url":       None,
+        }
+
+    ai_feedback = "Exercise completed!"
+    audio_url   = None
+
+    try:
+        result = get_ai_voice_feedback(
+            exercise_name = exercise_name,
+            total_reps    = total_reps,
+            min_angle     = min_angle,
+            max_angle     = max_angle,
+        )
+
+        if result:
+            audio_path, ai_text = result
+            ai_feedback = ai_text
+
+            if audio_path and os.path.exists(audio_path):
+                audio_dir  = "uploads/audio"
+                os.makedirs(audio_dir, exist_ok=True)
+                audio_dest = os.path.join(audio_dir, f"{current_user.id}_{exercise_name}_live.mp3")
+                shutil.copy(audio_path, audio_dest)
+                audio_url = f"/exercise/audio/{current_user.id}_{exercise_name}_live.mp3"
+
+    except Exception as e:
+        print(f"Live feedback error: {e}")
+
+    return {
+        "exercise_name":   exercise_name,
+        "total_reps":      total_reps,
+        "min_angle":       min_angle,
+        "max_angle":       max_angle,
+        "range_of_motion": range_of_motion,
+        "ai_feedback":     ai_feedback,
+        "audio_url":       audio_url,
+    }

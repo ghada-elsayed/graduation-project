@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+venv/
+env/
+*/venv/
+*/env/
+Pipfile.lock
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+/build
+/dist
+/.expo
+/.next
+
+# Local IDE / OS files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.DS_Store
+Thumbs.db
+
+# Project uploads and generated data
+**/uploads/
+**/static/analyzed/
+**/smart-sports-backend/chatbot_backend/venv_api/
+**/smart-sports-backend/venv_api/
+
+# Log files
+*.log

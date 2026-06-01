@@ -1,0 +1,523 @@
+ingr_name,ingr_id,cal/g,fat(g),carb(g),protein(g),category
+cottage cheese,ingr_0000000001,0.98,0.043,0.034,0.11,Mixed
+strawberries,ingr_0000000002,0.33,0.003,0.08,0.007,Vegetable
+garden salad,ingr_0000000003,0.646,0.034,0.032,0.061,Mixed
+potatoes,ingr_0000000005,0.77,0.001,0.17,0.02,Carb
+caesar salad,ingr_0000000006,0.44,0.021,0.043,0.032,Vegetable
+cauliflower,ingr_0000000007,0.25,0.003,0.05,0.018,Vegetable
+scrambled eggs,ingr_0000000008,1.48,0.11,0.016,0.1,Dairy
+wild rice,ingr_0000000009,1.19,0.004,0.25,0.05,Carb
+steak,ingr_0000000010,2.71,0.19,0.0,0.25,Protein
+cheese pizza,ingr_0000000011,2.659,0.094,0.335,0.112,Carb
+olives,ingr_0000000012,1.15,0.107,0.063,0.008,Mixed
+berries,ingr_0000000013,0.57,0.003,0.14,0.007,Mixed
+asparagus,ingr_0000000014,0.204,0.001,0.039,0.022,Vegetable
+hash browns,ingr_0000000015,3.26,0.22,0.32,0.026,Carb
+brussels sprouts,ingr_0000000016,0.43,0.003,0.09,0.034,Vegetable
+pasta salad,ingr_0000000017,2.015,0.119,0.173,0.059,Carb
+turkey,ingr_0000000018,1.89,0.07,0.001,0.29,Protein
+bread,ingr_0000000019,2.654,0.042,0.423,0.135,Carb
+duck,ingr_0000000020,3.37,0.28,0.0,0.19,Protein
+squash,ingr_0000000021,0.205,0.003,0.034,0.009,Vegetable
+guacamole,ingr_0000000022,2.0,0.171,0.086,0.029,Mixed
+brown rice,ingr_0000000023,1.11,0.009,0.23,0.026,Carb
+artic char,ingr_0000000024,1.54,0.081,0.0,0.2,Protein
+beef,ingr_0000000025,2.5,0.15,0.0,0.26,Protein
+white rice,ingr_0000000026,1.3,0.003,0.28,0.027,Carb
+broccoli,ingr_0000000027,0.35,0.004,0.07,0.024,Vegetable
+chicken,ingr_0000000028,1.65,0.036,0.0,0.31,Protein
+mixed greens,ingr_0000000029,0.28,0.004,0.053,0.022,Vegetable
+lettuce,ingr_0000000030,0.15,0.002,0.029,0.014,Vegetable
+cucumbers,ingr_0000000031,0.1,0.0,0.02,0.01,Vegetable
+tomatoes,ingr_0000000032,0.34,0.007,0.068,0.007,Vegetable
+bell peppers,ingr_0000000033,0.4,0.002,0.09,0.02,Vegetable
+celery,ingr_0000000034,0.16,0.002,0.034,0.007,Vegetable
+blue cheese,ingr_0000000035,3.53,0.29,0.023,0.21,Protein
+spinach (raw),ingr_0000000036,0.23,0.004,0.036,0.029,Vegetable
+cantaloupe,ingr_0000000037,0.34,0.002,0.08,0.008,Vegetable
+pineapple,ingr_0000000038,0.5,0.001,0.13,0.005,Mixed
+sausage,ingr_0000000039,3.446,0.273,0.042,0.193,Protein
+raspberries,ingr_0000000040,0.53,0.007,0.12,0.012,Mixed
+blackberries,ingr_0000000041,0.43,0.005,0.092,0.014,Vegetable
+avocado,ingr_0000000042,1.6,0.15,0.09,0.02,Mixed
+green beans,ingr_0000000043,0.31,0.001,0.07,0.018,Vegetable
+bean sprouts,ingr_0000000044,0.3,0.002,0.059,0.03,Vegetable
+carrot,ingr_0000000045,0.41,0.002,0.1,0.009,Vegetable
+mushroom,ingr_0000000046,0.22,0.003,0.033,0.031,Vegetable
+corn,ingr_0000000047,0.96,0.015,0.21,0.034,Carb
+fish,ingr_0000000049,0.9,0.13,0.0,0.184,Protein
+tofu,ingr_0000000050,0.73,0.048,0.019,0.08,Mixed
+shrimp,ingr_0000000051,0.99,0.003,0.002,0.24,Protein
+cheese,ingr_0000000052,4.02,0.33,0.013,0.25,Protein
+nuts,ingr_0000000053,6.07,0.54,0.21,0.2,Protein
+apple,ingr_0000000054,0.52,0.002,0.14,0.003,Mixed
+banana,ingr_0000000055,0.89,0.003,0.23,0.011,Carb
+kiwi,ingr_0000000056,0.61,0.005,0.15,0.011,Carb
+lemon,ingr_0000000057,0.29,0.003,0.09,0.011,Vegetable
+orange,ingr_0000000058,0.47,0.001,0.12,0.009,Vegetable
+oatmeal,ingr_0000000059,0.68,0.014,0.12,0.024,Mixed
+tortilla,ingr_0000000060,2.18,0.029,0.45,0.06,Carb
+potato chips,ingr_0000000061,5.36,0.35,0.53,0.07,Carb
+noodles,ingr_0000000062,1.38,0.021,0.25,0.045,Carb
+bean(seed) ,ingr_0000000063,1.4,0.006,0.24,0.09,Carb
+grape juice,ingr_0000000065,0.67,0.004,0.17,0.006,Carb
+ground beef,ingr_0000000066,3.321,0.295,0.0,0.142,Fat
+syrup,ingr_0000000067,2.6,0.001,0.67,0.0,Carb
+grapefruits,ingr_0000000068,0.42,0.001,0.11,0.008,Vegetable
+fruit punch,ingr_0000000069,0.45,0.0,0.125,0.0,Vegetable
+figs,ingr_0000000070,2.75,0.0,0.65,0.025,Carb
+macaroni and cheese,ingr_0000000071,1.64,0.05,0.23,0.07,Carb
+radishes,ingr_0000000073,0.16,0.001,0.034,0.007,Vegetable
+pasta,ingr_0000000074,1.316,0.011,0.248,0.051,Carb
+refried beans,ingr_0000000075,0.918,0.012,0.152,0.052,Carb
+brisket,ingr_0000000076,1.552,0.072,0.0,0.21,Protein
+almonds,ingr_0000000077,5.781,0.495,0.227,0.224,Protein
+protein powder,ingr_0000000078,4.0,0.033,0.1,0.8,Protein
+okra,ingr_0000000079,0.328,0.002,0.072,0.019,Vegetable
+pickles,ingr_0000000081,0.11,0.002,0.023,0.003,Vegetable
+pecans,ingr_0000000082,6.9,0.72,0.14,0.09,Fat
+muenster cheese,ingr_0000000083,3.675,0.296,0.011,0.239,Protein
+brie cheese,ingr_0000000084,3.334,0.28,0.005,0.21,Protein
+apple juice,ingr_0000000085,0.46,0.001,0.11,0.001,Vegetable
+raisin bran,ingr_0000000086,3.14,0.027,0.77,0.08,Carb
+coleslaw,ingr_0000000087,1.523,0.097,0.148,0.01,Mixed
+margarine,ingr_0000000088,7.17,0.81,0.007,0.002,Fat
+spaghetti,ingr_0000000089,1.58,0.009,0.31,0.06,Carb
+herring,ingr_0000000091,0.859,0.059,0.032,0.047,Mixed
+alfalfa,ingr_0000000093,0.29,0.007,0.038,0.04,Vegetable
+onions,ingr_0000000094,0.4,0.001,0.09,0.011,Vegetable
+artichokes,ingr_0000000095,0.47,0.002,0.11,0.033,Vegetable
+mussels,ingr_0000000096,1.718,0.045,0.07,0.238,Protein
+falafel,ingr_0000000097,3.341,0.178,0.307,0.133,Carb
+multigrain bread,ingr_0000000098,2.857,0.092,0.49,0.041,Carb
+marshmallows,ingr_0000000099,3.18,0.002,0.81,0.018,Carb
+oats,ingr_0000000100,3.89,0.069,0.663,0.169,Protein
+leeks,ingr_0000000101,0.61,0.003,0.14,0.015,Mixed
+snow peas,ingr_0000000102,0.81,0.004,0.14,0.05,Mixed
+pretzels,ingr_0000000103,3.803,0.026,0.804,0.101,Carb
+strudels,ingr_0000000104,3.182,0.108,0.5,0.05,Carb
+grilled chicken,ingr_0000000105,2.262,0.149,0.001,0.226,Protein
+half and half,ingr_0000000106,1.3,0.12,0.043,0.03,Mixed
+mixed nuts,ingr_0000000107,6.069,0.535,0.211,0.206,Protein
+spring rolls,ingr_0000000108,1.543,0.08,0.043,0.162,Protein
+french toast,ingr_0000000109,2.292,0.109,0.248,0.078,Carb
+barbecue sauce,ingr_0000000110,1.72,0.006,0.41,0.008,Carb
+clams,ingr_0000000111,1.48,0.02,0.051,0.255,Protein
+honeydew melons,ingr_0000000112,0.36,0.001,0.09,0.005,Vegetable
+ketchup,ingr_0000000113,1.12,0.002,0.26,0.013,Carb
+polenta,ingr_0000000114,3.7,0.018,0.79,0.07,Carb
+lemonade,ingr_0000000115,0.4,0.0,0.1,0.001,Vegetable
+mayonnaise,ingr_0000000116,6.8,0.75,0.006,0.01,Fat
+tacos,ingr_0000000117,2.26,0.13,0.201,0.088,Carb
+eggnog,ingr_0000000118,0.878,0.042,0.08,0.046,Mixed
+tabouli,ingr_0000000119,0.85,0.045,0.107,0.021,Mixed
+gelatin,ingr_0000000120,0.618,0.0,0.141,0.012,Mixed
+watermelon,ingr_0000000121,0.3,0.002,0.076,0.006,Vegetable
+garlic,ingr_0000000122,1.49,0.005,0.33,0.064,Carb
+crawfish,ingr_0000000123,0.77,0.01,0.0,0.16,Protein
+walnuts,ingr_0000000124,6.533,0.642,0.139,0.151,Protein
+octopus,ingr_0000000125,1.637,0.021,0.044,0.297,Protein
+mustard,ingr_0000000126,0.613,0.033,0.06,0.037,Mixed
+pastries,ingr_0000000127,5.508,0.384,0.452,0.072,Carb
+egg whites,ingr_0000000128,0.52,0.002,0.007,0.1,Mixed
+raisins,ingr_0000000129,2.99,0.005,0.79,0.031,Carb
+rye bread,ingr_0000000130,2.586,0.032,0.482,0.086,Carb
+dark chocolate,ingr_0000000131,5.75,0.46,0.27,0.06,Carb
+croissants,ingr_0000000132,4.062,0.212,0.459,0.08,Carb
+shallots,ingr_0000000133,0.2,0.002,0.033,0.015,Vegetable
+biscuits,ingr_0000000134,3.525,0.162,0.447,0.07,Carb
+tilapia,ingr_0000000135,1.288,0.027,0.0,0.261,Protein
+poached eggs,ingr_0000000136,1.425,0.092,0.008,0.125,Dairy
+succotash,ingr_0000000137,0.99,0.01,0.2,0.05,Carb
+seafood,ingr_0000000138,2.044,0.081,0.018,0.285,Protein
+egg rolls,ingr_0000000139,1.966,0.045,0.287,0.102,Carb
+caesar dressing,ingr_0000000140,0.441,0.021,0.043,0.032,Vegetable
+tuna salad,ingr_0000000141,1.87,0.092,0.092,0.162,Protein
+veal,ingr_0000000143,1.72,0.076,0.0,0.244,Protein
+sorbet,ingr_0000000144,1.24,0.005,0.267,0.019,Carb
+bison,ingr_0000000145,1.79,0.08,0.0,0.25,Protein
+scallops,ingr_0000000146,1.059,0.006,0.059,0.2,Protein
+turkey breast,ingr_0000000147,1.891,0.071,0.0,0.288,Protein
+parmesan cheese,ingr_0000000148,4.307,0.286,0.042,0.384,Protein
+sushi,ingr_0000000149,1.43,0.004,0.299,0.043,Carb
+swordfish,ingr_0000000150,1.718,0.079,0.0,0.234,Protein
+agave nectar,ingr_0000000151,3.1,0.005,0.76,0.001,Carb
+cabbage,ingr_0000000152,0.21,0.005,0.032,0.013,Vegetable
+bulgur,ingr_0000000153,3.42,0.013,0.76,0.12,Carb
+brown sugar,ingr_0000000154,3.8,0.0,0.98,0.001,Carb
+chicken thighs,ingr_0000000155,1.772,0.083,0.0,0.239,Protein
+paella,ingr_0000000156,1.834,0.091,0.141,0.104,Dairy
+colby cheese,ingr_0000000157,3.94,0.313,0.025,0.243,Protein
+gumbo,ingr_0000000158,0.867,0.033,0.098,0.041,Mixed
+apple cider,ingr_0000000159,0.462,0.001,0.113,0.001,Vegetable
+chow mein,ingr_0000000160,4.611,0.184,0.676,0.108,Carb
+olive oil,ingr_0000000161,8.84,1.0,0.0,0.0,Fat
+parsnips,ingr_0000000162,0.75,0.003,0.18,0.012,Carb
+kidney beans,ingr_0000000163,3.33,0.008,0.6,0.24,Protein
+chowders,ingr_0000000164,0.99,0.062,0.076,0.031,Mixed
+skim milk,ingr_0000000165,0.34,0.001,0.049,0.034,Vegetable
+grapefruit juice,ingr_0000000166,0.389,0.001,0.091,0.005,Vegetable
+lasagna,ingr_0000000168,1.35,0.05,0.154,0.072,Carb
+whole wheat bread,ingr_0000000169,2.468,0.033,0.421,0.13,Carb
+gravy,ingr_0000000170,0.791,0.059,0.052,0.02,Mixed
+almond butter,ingr_0000000171,6.086,0.555,0.187,0.209,Protein
+cherry pie,ingr_0000000172,2.694,0.122,0.387,0.028,Carb
+chestnuts,ingr_0000000173,1.308,0.014,0.281,0.021,Carb
+apple pie,ingr_0000000175,2.367,0.11,0.345,0.018,Carb
+french dressing,ingr_0000000176,4.532,0.442,0.156,0.007,Carb
+tempeh,ingr_0000000177,1.929,0.109,0.093,0.188,Protein
+pies,ingr_0000000178,2.367,0.111,0.345,0.019,Carb
+eggs,ingr_0000000179,1.555,0.105,0.012,0.125,Dairy
+rice noodles,ingr_0000000180,1.09,0.002,0.25,0.009,Carb
+milk shakes,ingr_0000000181,1.121,0.029,0.18,0.039,Carb
+soy yogurt,ingr_0000000182,1.014,0.019,0.173,0.037,Carb
+chips,ingr_0000000183,5.363,0.35,0.529,0.07,Carb
+ravioli,ingr_0000000184,0.771,0.015,0.138,0.025,Mixed
+collards,ingr_0000000185,0.313,0.006,0.053,0.03,Vegetable
+green peas,ingr_0000000186,0.774,0.004,0.136,0.05,Mixed
+chickpeas,ingr_0000000187,1.64,0.026,0.27,0.09,Carb
+carrot cake,ingr_0000000188,4.153,0.099,0.786,0.05,Carb
+vinegar,ingr_0000000189,0.0,0.0,0.0,0.0,Vegetable
+cheesecake,ingr_0000000191,3.21,0.223,0.253,0.057,Carb
+yam,ingr_0000000192,1.241,0.002,0.294,0.016,Carb
+hot dogs,ingr_0000000193,2.902,0.255,0.042,0.098,Fat
+fried rice,ingr_0000000194,1.577,0.022,0.299,0.047,Carb
+wafers,ingr_0000000195,4.334,0.144,0.726,0.068,Carb
+cod,ingr_0000000196,0.847,0.005,0.0,0.189,Protein
+salads,ingr_0000000197,1.523,0.097,0.148,0.01,Mixed
+breadsticks,ingr_0000000198,4.083,0.092,0.691,0.123,Carb
+swiss cheese,ingr_0000000199,3.799,0.282,0.052,0.276,Protein
+buttermilk,ingr_0000000200,0.402,0.009,0.048,0.033,Vegetable
+blueberries,ingr_0000000201,0.572,0.003,0.144,0.007,Mixed
+enchiladas,ingr_0000000202,1.681,0.092,0.158,0.061,Carb
+chili,ingr_0000000203,0.4,0.004,0.089,0.018,Vegetable
+corn on the cob,ingr_0000000205,1.061,0.024,0.22,0.031,Carb
+muffins,ingr_0000000206,3.77,0.159,0.533,0.046,Carb
+fried chicken,ingr_0000000207,2.461,0.118,0.019,0.304,Protein
+ice cream cones,ingr_0000000208,4.189,0.071,0.79,0.079,Carb
+pastrami,ingr_0000000209,1.458,0.058,0.004,0.216,Protein
+chocolate milk,ingr_0000000210,0.831,0.034,0.102,0.032,Mixed
+plums,ingr_0000000211,0.457,0.003,0.115,0.007,Vegetable
+burgers,ingr_0000000212,2.95,0.141,0.241,0.168,Protein
+pears,ingr_0000000213,0.572,0.001,0.152,0.004,Carb
+seeds,ingr_0000000214,5.582,0.492,0.108,0.309,Protein
+squid,ingr_0000000215,1.751,0.07,0.081,0.178,Protein
+tostadas,ingr_0000000216,1.48,0.078,0.132,0.071,Mixed
+lamb,ingr_0000000217,2.941,0.211,0.0,0.247,Protein
+brazil nuts,ingr_0000000218,6.574,0.663,0.121,0.142,Fat
+macaroni,ingr_0000000219,3.725,0.015,0.754,0.127,Carb
+pita bread,ingr_0000000220,2.75,0.011,0.558,0.088,Carb
+vegetable oil,ingr_0000000221,8.864,1.0,0.0,0.0,Fat
+pine nuts,ingr_0000000222,6.646,0.685,0.126,0.132,Fat
+macadamia nuts,ingr_0000000223,7.188,0.75,0.139,0.079,Fat
+potato salad,ingr_0000000224,1.429,0.08,0.111,0.028,Mixed
+veggie burgers,ingr_0000000225,1.771,0.061,0.141,0.159,Protein
+pasta sauce,ingr_0000000226,0.292,0.002,0.069,0.013,Vegetable
+calamari,ingr_0000000227,1.751,0.07,0.081,0.178,Protein
+cornmeal,ingr_0000000228,3.7,0.018,0.793,0.07,Carb
+frostings,ingr_0000000230,4.217,0.163,0.686,0.0,Carb
+deprecated,ingr_0000000231,0.905,0.003,0.234,0.011,Carb
+oysters,ingr_0000000232,1.989,0.128,0.117,0.088,Dairy
+smoothies,ingr_0000000234,0.383,0.0,0.084,0.013,Vegetable
+pecan pie,ingr_0000000235,4.123,0.218,0.525,0.049,Carb
+roast beef,ingr_0000000236,1.698,0.059,0.0,0.291,Protein
+hot chocolate,ingr_0000000237,0.77,0.023,0.109,0.035,Mixed
+hominy,ingr_0000000238,0.721,0.009,0.143,0.015,Mixed
+custard,ingr_0000000239,1.175,0.04,0.172,0.04,Carb
+smoked salmon,ingr_0000000240,1.173,0.043,0.0,0.184,Protein
+scones,ingr_0000000241,3.525,0.162,0.447,0.07,Carb
+tortellini,ingr_0000000242,3.072,0.072,0.47,0.138,Carb
+mozzarella cheese,ingr_0000000243,2.776,0.171,0.032,0.28,Protein
+chicken breast,ingr_0000000244,1.652,0.036,0.0,0.311,Protein
+wheat bread,ingr_0000000245,2.468,0.033,0.421,0.13,Carb
+baked beans,ingr_0000000246,1.529,0.05,0.216,0.057,Carb
+blueberry pie,ingr_0000000247,2.456,0.119,0.33,0.027,Carb
+hard boiled eggs,ingr_0000000248,1.555,0.105,0.012,0.125,Dairy
+cashews,ingr_0000000249,5.534,0.432,0.309,0.178,Protein
+rolls,ingr_0000000250,3.089,0.065,0.521,0.107,Carb
+tortilla chips,ingr_0000000251,4.642,0.153,0.737,0.086,Carb
+broth,ingr_0000000252,2.64,0.147,0.185,0.165,Protein
+tahini,ingr_0000000253,5.956,0.535,0.211,0.17,Protein
+mashed potatoes,ingr_0000000254,0.907,0.029,0.151,0.017,Carb
+nougat,ingr_0000000255,3.99,0.016,0.924,0.034,Carb
+fish oil,ingr_0000000256,9.033,1.01,0.0,0.0,Fat
+brownies,ingr_0000000257,4.661,0.288,0.498,0.062,Carb
+popcorn,ingr_0000000258,3.745,0.043,0.74,0.11,Carb
+corned beef,ingr_0000000259,2.508,0.19,0.005,0.179,Protein
+iced tea,ingr_0000000260,0.373,0.001,0.093,0.0,Vegetable
+pumpkins,ingr_0000000261,0.259,0.001,0.065,0.01,Vegetable
+yogurt,ingr_0000000262,0.589,0.004,0.036,0.1,Mixed
+mousse,ingr_0000000263,2.249,0.16,0.16,0.041,Carb
+bagels,ingr_0000000264,2.5,0.015,0.49,0.101,Carb
+sardines,ingr_0000000265,2.031,0.111,0.0,0.243,Protein
+coconuts,ingr_0000000267,3.537,0.333,0.152,0.033,Carb
+soft serve ice creams,ingr_0000000268,2.234,0.13,0.222,0.041,Carb
+onion rings,ingr_0000000269,4.106,0.253,0.438,0.039,Carb
+cocoa,ingr_0000000270,2.237,0.135,0.573,0.198,Protein
+peaches,ingr_0000000271,0.393,0.003,0.095,0.009,Vegetable
+cupcakes,ingr_0000000272,3.055,0.036,0.672,0.042,Carb
+sandwiches,ingr_0000000273,2.329,0.13,0.179,0.11,Carb
+trail mix,ingr_0000000274,4.62,0.286,0.454,0.139,Carb
+frozen yogurt,ingr_0000000275,1.633,0.059,0.245,0.041,Carb
+chocolate cake,ingr_0000000276,3.707,0.15,0.534,0.052,Carb
+chimichangas,ingr_0000000277,2.441,0.112,0.249,0.112,Carb
+omelets,ingr_0000000279,1.54,0.117,0.006,0.104,Dairy
+souffle,ingr_0000000280,1.691,0.13,0.06,0.079,Mixed
+edamame,ingr_0000000281,1.22,0.051,0.098,0.11,Dairy
+energy drinks,ingr_0000000282,0.459,0.001,0.12,0.003,Vegetable
+salad dressing,ingr_0000000283,4.799,0.467,0.165,0.008,Carb
+ribs,ingr_0000000284,3.513,0.281,0.0,0.227,Protein
+trout,ingr_0000000285,1.409,0.06,0.0,0.201,Protein
+romano cheese,ingr_0000000286,3.874,0.273,0.036,0.318,Protein
+toast,ingr_0000000287,3.131,0.042,0.555,0.13,Carb
+empanadas,ingr_0000000288,3.355,0.18,0.312,0.111,Carb
+ranch dressing,ingr_0000000289,4.837,0.505,0.068,0.01,Fat
+cheddar cheese,ingr_0000000290,4.019,0.33,0.013,0.248,Protein
+salt,ingr_0000000291,0.0,0.0,0.0,0.0,Vegetable
+spreads,ingr_0000000292,2.357,0.171,0.12,0.079,Mixed
+sandwich cookies,ingr_0000000293,4.697,0.202,0.704,0.056,Carb
+granola,ingr_0000000294,4.693,0.204,0.647,0.1,Carb
+provolone cheese,ingr_0000000295,3.519,0.266,0.022,0.253,Protein
+sundaes,ingr_0000000296,1.799,0.053,0.302,0.037,Carb
+focaccia,ingr_0000000298,2.496,0.079,0.355,0.089,Carb
+soy milk,ingr_0000000299,0.534,0.017,0.061,0.033,Mixed
+egg yolks,ingr_0000000300,3.228,0.267,0.036,0.159,Protein
+english muffins,ingr_0000000301,2.355,0.018,0.458,0.078,Carb
+pie crust,ingr_0000000302,2.367,0.11,0.345,0.018,Carb
+chocolate chip cookies,ingr_0000000303,4.874,0.281,0.569,0.058,Carb
+puddings,ingr_0000000304,1.197,0.032,0.198,0.032,Carb
+fudge,ingr_0000000305,4.114,0.103,0.762,0.024,Carb
+croutons,ingr_0000000306,4.081,0.067,0.723,0.12,Carb
+stuffing,ingr_0000000307,3.854,0.035,0.767,0.11,Carb
+lamb chops,ingr_0000000308,2.941,0.211,0.0,0.247,Protein
+corn chips,ingr_0000000310,5.18,0.281,0.632,0.06,Carb
+granola bars,ingr_0000000311,4.712,0.2,0.653,0.1,Carb
+pepper,ingr_0000000312,0.4,0.002,0.093,0.02,Vegetable
+peanut butter,ingr_0000000313,5.895,0.503,0.194,0.251,Protein
+sourdough bread,ingr_0000000314,2.889,0.018,0.562,0.119,Carb
+corn dogs,ingr_0000000315,2.629,0.109,0.32,0.099,Carb
+roast chicken,ingr_0000000316,2.237,0.13,0.0,0.235,Protein
+flounder,ingr_0000000317,0.703,0.019,0.0,0.124,Mixed
+flour,ingr_0000000318,3.641,0.01,0.76,0.102,Carb
+feta cheese,ingr_0000000319,2.641,0.211,0.042,0.138,Fat
+black beans,ingr_0000000320,1.32,0.005,0.237,0.089,Carb
+water,ingr_0000000321,0.0,0.0,0.0,0.0,Vegetable
+garlic bread,ingr_0000000322,3.501,0.167,0.421,0.082,Carb
+chocolate,ingr_0000000324,5.461,0.314,0.607,0.049,Carb
+nectarines,ingr_0000000325,0.442,0.003,0.107,0.011,Vegetable
+chicken soup,ingr_0000000326,0.355,0.012,0.034,0.025,Vegetable
+sugar,ingr_0000000328,3.88,0.0,1.0,0.0,Carb
+pate nutrition,ingr_0000000329,3.182,0.281,0.015,0.141,Fat
+haddock,ingr_0000000330,0.904,0.006,0.0,0.2,Protein
+pancakes,ingr_0000000331,2.266,0.096,0.284,0.063,Carb
+salmon,ingr_0000000332,1.78,0.08,0.0,0.24,Protein
+potato bread,ingr_0000000333,2.658,0.031,0.469,0.128,Carb
+white bread,ingr_0000000334,2.649,0.032,0.489,0.091,Carb
+eggplant,ingr_0000000335,0.248,0.002,0.059,0.01,Vegetable
+peanuts,ingr_0000000336,5.675,0.492,0.161,0.253,Protein
+waffles,ingr_0000000337,2.903,0.143,0.327,0.079,Carb
+vinaigrette,ingr_0000000338,4.655,0.518,0.026,0.0,Fat
+grits,ingr_0000000339,0.59,0.002,0.13,0.014,Mixed
+lo mein,ingr_0000000340,1.22,0.024,0.2,0.048,Carb
+cream,ingr_0000000341,3.363,0.366,0.027,0.028,Fat
+turnips,ingr_0000000342,0.217,0.001,0.051,0.007,Vegetable
+cranberry juice,ingr_0000000343,0.453,0.001,0.111,0.003,Vegetable
+peach,ingr_0000000344,0.388,0.003,0.095,0.009,Vegetable
+turnover,ingr_0000000346,1.781,0.081,0.256,0.015,Carb
+baby carrots,ingr_0000000347,0.41,0.002,0.1,0.009,Vegetable
+egg salad,ingr_0000000348,2.12,0.184,0.024,0.081,Dairy
+mangos,ingr_0000000349,0.606,0.004,0.15,0.008,Carb
+miso soup,ingr_0000000350,0.245,0.012,0.015,0.024,Vegetable
+mackerel,ingr_0000000351,2.62,0.18,0.0,0.24,Protein
+calzones,ingr_0000000352,3.08,0.21,0.13,0.16,Protein
+burritos,ingr_0000000353,1.8,0.068,0.23,0.07,Carb
+soy nuts,ingr_0000000354,4.49,0.22,0.29,0.43,Protein
+crackers,ingr_0000000355,5.1,0.26,0.61,0.066,Carb
+french fries,ingr_0000000356,3.12,0.15,0.41,0.034,Carb
+lentils,ingr_0000000357,1.14,0.004,0.2,0.09,Carb
+mixed vegetables,ingr_0000000358,0.32,0.003,0.069,0.017,Vegetable
+honey,ingr_0000000359,3.04,0.0,0.82,0.003,Carb
+risotto,ingr_0000000360,1.22,0.039,0.16,0.043,Carb
+roast turkey,ingr_0000000361,1.89,0.074,0.001,0.29,Protein
+ice creams,ingr_0000000362,2.07,0.11,0.24,0.035,Carb
+meatloaf,ingr_0000000363,1.81,0.099,0.077,0.15,Protein
+sunflower seeds,ingr_0000000364,5.46,0.5,0.15,0.19,Protein
+quiche,ingr_0000000365,3.71,0.31,0.099,0.13,Fat
+sauerkraut,ingr_0000000366,0.19,0.001,0.043,0.009,Vegetable
+lime,ingr_0000000367,0.3,0.002,0.105,0.007,Vegetable
+donuts,ingr_0000000368,4.21,0.23,0.48,0.061,Carb
+fritters,ingr_0000000369,2.76,0.2,0.2,0.046,Carb
+mahi mahi,ingr_0000000370,1.09,0.009,0.0,0.24,Protein
+dumplings,ingr_0000000371,2.3,0.054,0.39,0.062,Carb
+chilaquiles,ingr_0000000372,1.95,0.12,0.12,0.089,Dairy
+snapper,ingr_0000000373,1.28,0.017,0.0,0.26,Protein
+peas,ingr_0000000374,0.84,0.002,0.16,0.054,Carb
+fruit salad,ingr_0000000375,0.59,0.003,0.15,0.008,Carb
+naan,ingr_0000000376,2.91,0.057,0.5,0.096,Carb
+quinoa,ingr_0000000377,1.2,0.019,0.21,0.044,Carb
+catfish,ingr_0000000378,1.44,0.072,0.0,0.18,Protein
+lima beans,ingr_0000000379,1.15,0.004,0.21,0.078,Carb
+pizza,ingr_0000000380,2.66,0.097,0.33,0.11,Carb
+gouda cheese,ingr_0000000381,3.56,0.27,0.022,0.25,Protein
+cheeseburgers,ingr_0000000382,2.69,0.14,0.2,0.15,Protein
+italian dressing,ingr_0000000383,2.31,0.205,0.119,0.004,Fat
+coffee,ingr_0000000384,0.0,0.0,0.0,0.0,Vegetable
+curries,ingr_0000000385,1.04,0.046,0.032,0.12,Mixed
+eel,ingr_0000000386,2.36,0.15,0.0,0.24,Protein
+candies,ingr_0000000387,3.94,0.002,0.98,0.0,Carb
+fried eggs,ingr_0000000388,1.96,0.15,0.008,0.14,Dairy
+cobbler,ingr_0000000391,1.99,0.063,0.35,0.02,Carb
+teriyaki sauce,ingr_0000000393,0.89,0.0,0.16,0.059,Carb
+gorgonzola cheese,ingr_0000000394,3.53,0.29,0.023,0.21,Protein
+string cheese,ingr_0000000395,3.0,0.22,0.022,0.22,Protein
+gyros,ingr_0000000397,1.85,0.1,0.11,0.12,Dairy
+raisin bread,ingr_0000000399,2.74,0.044,0.52,0.079,Carb
+cornbread,ingr_0000000400,2.66,0.071,0.44,0.067,Carb
+wraps,ingr_0000000401,3.25,0.071,0.56,0.087,Carb
+tuna,ingr_0000000402,1.3,0.006,0.0,0.29,Protein
+fruit cocktail,ingr_0000000403,0.73,0.001,0.19,0.004,Carb
+potato skins,ingr_0000000404,3.4,0.26,0.15,0.13,Carb
+seaweed,ingr_0000000405,0.38,0.003,0.084,0.024,Vegetable
+sherbet,ingr_0000000406,1.44,0.02,0.3,0.011,Carb
+horseradish,ingr_0000000407,0.48,0.007,0.11,0.012,Vegetable
+jambalaya,ingr_0000000408,1.56,0.074,0.15,0.071,Carb
+greek salad,ingr_0000000409,1.13,0.094,0.047,0.032,Mixed
+goulash,ingr_0000000410,1.07,0.039,0.1,0.076,Mixed
+stews,ingr_0000000411,1.06,0.032,0.082,0.11,Mixed
+havarti cheese,ingr_0000000412,3.71,0.3,0.028,0.23,Protein
+pilaf,ingr_0000000413,1.592,0.049,0.256,0.025,Carb
+chutney,ingr_0000000414,1.2,0.08,0.1,0.05,Mixed
+cereal,ingr_0000000415,3.76,0.067,0.73,0.12,Carb
+ground chicken,ingr_0000000416,1.89,0.11,0.0,0.23,Protein
+fajitas,ingr_0000000417,2.0,0.079,0.18,0.14,Carb
+chicken wings,ingr_0000000418,3.28,0.24,0.098,0.17,Protein
+ice pop,ingr_0000000420,0.79,0.002,0.19,0.0,Carb
+ground turkey,ingr_0000000421,2.58,0.17,0.0,0.25,Protein
+crab,ingr_0000000422,0.83,0.007,0.0,0.18,Protein
+plate only,ingr_0000000423,0.0,0.0,0.0,0.0,Vegetable
+prunes,ingr_0000000424,2.4,0.004,0.64,0.022,Carb
+goat cheese,ingr_0000000425,2.64,0.21,0.0,0.19,Protein
+tomato soup,ingr_0000000426,0.35,0.002,0.074,0.007,Vegetable
+muesli,ingr_0000000427,3.52,0.033,0.76,0.11,Carb
+gnocchi,ingr_0000000429,2.01,0.012,0.41,0.06,Carb
+apricots,ingr_0000000430,0.48,0.004,0.11,0.014,Vegetable
+licorice,ingr_0000000431,3.5,0.023,0.8,0.026,Carb
+red potatoes,ingr_0000000432,0.89,0.001,0.2,0.023,Carb
+roasted potatoes,ingr_0000000433,1.41,0.068,0.18,0.021,Carb
+sour cream,ingr_0000000434,1.98,0.19,0.046,0.024,Mixed
+jerky,ingr_0000000435,4.1,0.26,0.11,0.33,Protein
+coffee creamer,ingr_0000000436,1.32,0.099,0.112,0.01,Mixed
+sweet potato,ingr_0000000437,0.76,0.0,0.18,0.01,Carb
+chicken nuggets,ingr_0000000438,3.07,0.2,0.15,0.16,Protein
+anchovies,ingr_0000000439,2.1,0.097,0.0,0.29,Protein
+grapes,ingr_0000000440,0.69,0.002,0.18,0.007,Carb
+butter,ingr_0000000441,7.17,0.81,0.001,0.008,Fat
+hummus,ingr_0000000442,1.66,0.096,0.14,0.079,Mixed
+crispbread,ingr_0000000443,3.66,0.013,0.82,0.079,Carb
+dates,ingr_0000000444,2.82,0.004,0.75,0.025,Carb
+papayas,ingr_0000000445,0.43,0.003,0.11,0.005,Vegetable
+nutrition bars,ingr_0000000447,4.0,0.098,0.4,0.38,Protein
+jalapenos,ingr_0000000448,0.29,0.004,0.065,0.009,Vegetable
+cappuccino,ingr_0000000449,0.42,0.016,0.042,0.026,Vegetable
+buns,ingr_0000000450,2.79,0.039,0.5,0.098,Carb
+taco shells,ingr_0000000451,4.76,0.22,0.63,0.064,Carb
+maple syrup,ingr_0000000452,2.6,0.001,0.65,0.001,Carb
+deprecated,ingr_0000000453,0.52,0.002,0.003,0.14,Mixed
+rice cakes,ingr_0000000454,3.885,0.028,0.81,0.082,Carb
+cookies,ingr_0000000455,4.92,0.25,0.65,0.051,Carb
+barley,ingr_0000000456,1.23,0.004,0.28,0.023,Carb
+sun dried tomatoes,ingr_0000000457,2.58,0.03,0.56,0.14,Carb
+deprecated,ingr_0000000458,0.3,0.001,0.076,0.006,Vegetable
+cereal bars,ingr_0000000459,3.42,0.009,0.78,0.059,Carb
+nectar,ingr_0000000460,0.316,0.0,0.082,0.066,Vegetable
+samosas,ingr_0000000461,2.62,0.17,0.24,0.035,Carb
+beets,ingr_0000000463,0.44,0.002,0.1,0.017,Vegetable
+baked potatoes,ingr_0000000464,0.93,0.001,0.21,0.025,Carb
+american cheese,ingr_0000000465,3.12,0.23,0.088,0.17,Protein
+pistachios,ingr_0000000466,5.69,0.46,0.28,0.21,Protein
+relish,ingr_0000000467,1.3,0.005,0.35,0.004,Carb
+camembert cheese,ingr_0000000468,3.0,0.24,0.005,0.2,Protein
+carp,ingr_0000000469,1.28,0.027,0.0,0.26,Protein
+deprecated,ingr_0000000470,0.93,0.001,0.21,0.025,Carb
+cherry tomatoes,ingr_0000000471,0.18,0.002,0.039,0.009,Vegetable
+couscous,ingr_0000000472,1.12,0.002,0.23,0.038,Carb
+cranberries,ingr_0000000473,0.46,0.001,0.12,0.005,Vegetable
+quesadillas,ingr_0000000474,3.68,0.23,0.24,0.16,Protein
+salsa,ingr_0000000475,0.29,0.002,0.066,0.015,Vegetable
+almond milk,ingr_0000000476,0.23,0.01,0.032,0.004,Vegetable
+sweet rolls,ingr_0000000478,2.73,0.063,0.46,0.086,Carb
+challah,ingr_0000000479,2.87,0.06,0.48,0.095,Carb
+ice cream soda,ingr_0000000480,0.51,0.0,0.13,0.0,Mixed
+flatbread,ingr_0000000481,2.75,0.012,0.56,0.091,Carb
+rice,ingr_0000000482,1.3,0.003,0.28,0.027,Carb
+water chestnuts,ingr_0000000483,0.3,0.001,0.068,0.009,Vegetable
+chicken salad,ingr_0000000484,2.27,0.16,0.029,0.17,Protein
+zucchini,ingr_0000000485,0.15,0.004,0.027,0.011,Vegetable
+cakes,ingr_0000000486,3.91,0.18,0.56,0.03,Carb
+crepes,ingr_0000000487,1.65,0.083,0.16,0.059,Carb
+mexican cheese,ingr_0000000488,3.58,0.29,0.018,0.24,Protein
+lobster,ingr_0000000489,1.43,0.019,0.031,0.26,Protein
+tea,ingr_0000000490,0.01,0.0,0.003,0.0,Vegetable
+nachos,ingr_0000000491,2.24,0.17,0.048,0.12,Dairy
+taco salad,ingr_0000000492,1.57,0.085,0.14,0.07,Mixed
+jams,ingr_0000000494,2.78,0.001,0.69,0.004,Carb
+cream cheese,ingr_0000000495,3.5,0.34,0.055,0.062,Fat
+capers,ingr_0000000496,0.23,0.009,0.049,0.024,Vegetable
+halibut,ingr_0000000497,1.11,0.016,0.0,0.23,Protein
+orange juice,ingr_0000000498,0.47,0.001,0.11,0.007,Vegetable
+latte,ingr_0000000499,0.44,0.017,0.044,0.029,Vegetable
+taquitos,ingr_0000000500,2.86,0.13,0.34,0.093,Carb
+cherries,ingr_0000000501,0.63,0.002,0.16,0.011,Carb
+milk,ingr_0000000502,0.51,0.019,0.05,0.035,Mixed
+applesauce,ingr_0000000503,0.68,0.002,0.17,0.002,Carb
+vegetable juice,ingr_0000000504,0.22,0.003,0.039,0.009,Vegetable
+meatballs,ingr_0000000505,2.86,0.22,0.081,0.14,Fat
+pinto beans,ingr_0000000506,1.43,0.007,0.26,0.09,Carb
+mandarin oranges,ingr_0000000507,0.53,0.003,0.13,0.008,Mixed
+soy sauce,ingr_0000000508,0.53,0.006,0.049,0.081,Mixed
+tempura,ingr_0000000509,1.05,0.039,0.11,0.065,Mixed
+chicken apple sausage,ingr_0000000510,1.6,0.1,0.03,0.14,Dairy
+spinach (cooked),ingr_0000000511,0.23,0.0,0.04,0.03,Vegetable
+kimchi,ingr_0000000512,0.3,0.001,0.057,0.016,Vegetable
+millet,ingr_0000000513,1.19,0.01,0.237,0.035,Carb
+wheat berry,ingr_0000000514,0.91,0.005,0.191,0.042,Carb
+arugula,ingr_0000000515,0.25,0.007,0.037,0.026,Vegetable
+rosemary,ingr_0000000516,1.31,0.057,0.2,0.029,Carb
+chard,ingr_0000000517,0.19,0.002,0.037,0.018,Vegetable
+thyme,ingr_0000000518,1.01,0.017,0.24,0.06,Carb
+oregano,ingr_0000000519,2.7,0.04,0.69,0.09,Carb
+lemon juice,ingr_0000000520,0.17,0.0,0.056,0.004,Vegetable
+basil,ingr_0000000521,0.24,0.0,0.02,0.04,Vegetable
+tatsoi,ingr_0000000522,0.22,0.003,0.039,0.022,Vegetable
+cilantro,ingr_0000000523,0.228,0.005,0.037,0.022,Vegetable
+parsley,ingr_0000000524,0.371,0.008,0.064,0.029,Vegetable
+bok choy,ingr_0000000525,0.13,0.002,0.022,0.015,Vegetable
+mustard greens,ingr_0000000526,0.27,0.004,0.047,0.029,Vegetable
+chive,ingr_0000000527,0.3,0.007,0.044,0.033,Vegetable
+celery root,ingr_0000000528,0.42,0.003,0.092,0.015,Vegetable
+chayote squash,ingr_0000000529,0.24,0.005,0.051,0.006,Vegetable
+endive,ingr_0000000530,0.17,0.002,0.034,0.013,Vegetable
+pumpkin seeds,ingr_0000000531,4.46,0.19,0.54,0.19,Protein
+pesto,ingr_0000000532,5.62,0.549,0.08,0.121,Fat
+orzo,ingr_0000000533,2.25,0.009,0.458,0.079,Carb
+country rice,ingr_0000000534,1.5204,0.068,0.316,0.0386,Carb
+green onions,ingr_0000000535,0.32,0.002,0.07,0.018,Vegetable
+banana with peel,ingr_0000000536,0.556,0.002,0.144,0.007,Mixed
+orange with peel,ingr_0000000537,0.294,0.001,0.075,0.006,Vegetable
+jicama,ingr_0000000538,0.38,0.001,0.09,0.007,Vegetable
+ginger,ingr_0000000540,0.8,0.008,0.18,0.018,Carb
+tomatillo,ingr_0000000541,0.32,0.01,0.06,0.01,Vegetable
+white beans,ingr_0000000542,1.39,0.004,0.251,0.097,Carb
+chia seeds,ingr_0000000543,4.86,0.31,0.42,0.17,Protein
+corn starch,ingr_0000000544,3.8,0.0005,0.914,0.003,Carb
+greek yogurt,ingr_0000000545,0.59,0.004,0.036,0.1,Mixed
+balsamic vinegar,ingr_0000000546,0.88,0.0,0.17,0.005,Carb
+corn nuts,ingr_0000000547,4.36,0.14,0.72,0.09,Carb
+coconut milk,ingr_0000000548,2.3,0.24,0.06,0.023,Fat
+pizza dough,ingr_0000000549,2.355,0.047,0.417,0.054,Carb
+fennel,ingr_0000000550,0.31,0.002,0.07,0.012,Vegetable
+pizza sauce,ingr_0000000551,0.29,0.002,0.07,0.013,Vegetable
+pomegranate,ingr_0000000552,0.83,0.012,0.19,0.017,Carb
+nut cheese,ingr_0000000553,2.1,0.101,0.04,0.256,Protein
+soy sausage,ingr_0000000554,2.02,0.144,0.063,0.16,Protein
+oil,ingr_0000000555,8.864,1.0,0.0,0.0,Fat

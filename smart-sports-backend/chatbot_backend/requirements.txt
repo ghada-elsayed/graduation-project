@@ -1,0 +1,39 @@
+# ═══════════════════════════════════════════
+#  chatbot_backend — requirements.txt
+#  Windows compatible — no langchain-classic
+# ═══════════════════════════════════════════
+
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+pydantic
+aiofiles
+
+# LangChain — كل الـ imports من هنا مباشرة
+langchain
+langchain-core
+langchain-community
+langchain-groq
+langchain-huggingface
+langchain-pinecone
+
+# Pinecone
+pinecone-client
+
+# LangGraph
+langgraph
+langgraph-checkpoint
+
+# Groq SDK
+groq
+
+# Embeddings + CrossEncoder
+sentence-transformers
+transformers
+
+# CV parsing
+docling
+
+# Utilities
+numpy<2.0

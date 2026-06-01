@@ -1,0 +1,8 @@
+BACKEND:
+cd "E:\Graduation Project\Salma Part\G P test 2 claudo\smart-sports-backend" 
+.\venv\Scripts\Activate.ps1   
+python -m uvicorn app.main:app --reload  
+
+FRONTEND:
+cd "E:\Graduation Project\Salma Part\G P test 2 claudo\smart-sports-frontend"
+npm run start     
