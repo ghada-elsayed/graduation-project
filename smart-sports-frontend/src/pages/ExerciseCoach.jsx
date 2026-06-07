@@ -481,9 +481,10 @@ export default function ExerciseCoach() {
   ];
 
   const titleize = value => value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  const exerciseOptions = backendExercises.length
+  const exerciseOptions = (backendExercises.length
     ? backendExercises.map(ex => [ex.name, ex.description || titleize(ex.name)])
-    : exercises;
+    : exercises
+  ).filter(([name]) => name !== "lunge");
 
   return (
     <div style={{ minHeight:"100vh", background:"#f5f7fa", fontFamily:"Segoe UI,sans-serif" }}>
@@ -694,15 +695,26 @@ export default function ExerciseCoach() {
                   </div>
                 ))}
               </div>
+              
               {result.video_url && (
-                <video src={`http://127.0.0.1:8000${result.video_url}?t=${Date.now()}`}
-                  controls style={{ width:"100%", borderRadius:10, background:"#000", marginBottom:"1rem" }}
+                <video
+                  src={result.video_url.startsWith("http") 
+                    ? result.video_url 
+                    : `http://127.0.0.1:8000${result.video_url}`}
+                  controls
+                  style={{ width:"100%", borderRadius:10, background:"#000", marginBottom:"1rem" }}
                 />
               )}
+              
               {result.audio_url && (
                 <div style={{ marginBottom:"1rem" }}>
                   <div style={{ fontSize:".75rem", fontWeight:600, color:"#475569", marginBottom:".35rem" }}>🔊 Coach Feedback</div>
-                  <audio controls src={`http://127.0.0.1:8000${result.audio_url}`} style={{ width:"100%" }} />
+                  <audio controls
+                    src={result.audio_url.startsWith("http")
+                      ? result.audio_url
+                      : `http://127.0.0.1:8000${result.audio_url}`}
+                    style={{ width:"100%" }}
+                  />
                 </div>
               )}
               {result.ai_feedback && (

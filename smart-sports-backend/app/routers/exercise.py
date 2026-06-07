@@ -3,12 +3,12 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-import os, shutil, tempfile
+import os, shutil
+import httpx
 from app.database import get_db
 from app.core.security import decode_token
 from app.models.user import User
-from app.services.exercise_analysis_service import analyze_exercise_video, get_all_exercises, get_ai_voice_feedback
-from app.core.config import settings
+from app.services.exercise_analysis_service import get_all_exercises, get_ai_voice_feedback
 
 router   = APIRouter(prefix="/exercise", tags=["Exercise Analysis"])
 security = HTTPBearer()
@@ -39,6 +39,36 @@ def get_current_user(
 def list_exercises():
     return get_all_exercises()
 
+# @router.post("/analyze")
+# async def analyze_exercise(
+#     file:          UploadFile = File(...),
+#     exercise_name: str        = Form(...),
+#     db:            Session    = Depends(get_db),
+#     current_user:  User       = Depends(get_current_user)
+# ):
+#     if not file.filename.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')):
+#         raise HTTPException(status_code=400, detail="Only video files allowed")
+
+#     try:
+#         video_bytes = await file.read()
+#         files = {
+#             "file": (
+#                 file.filename,
+#                 video_bytes,
+#                 file.content_type or "application/octet-stream",
+#             )
+#         }
+#         data = {"exercise_name": exercise_name}
+#         async with httpx.AsyncClient(timeout=120) as client:
+#             response = await client.post(
+#                 "https://pessimism-channel-sixtyfold.ngrok-free.dev/generate_feedback",
+#                 files=files,
+#                 data=data,
+#             )
+#         response.raise_for_status()
+#         return response.json()
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 @router.post("/analyze")
 async def analyze_exercise(
     file:          UploadFile = File(...),
@@ -49,31 +79,42 @@ async def analyze_exercise(
     if not file.filename.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')):
         raise HTTPException(status_code=400, detail="Only video files allowed")
 
-    tmp_dir  = tempfile.mkdtemp()
-    tmp_path = os.path.join(tmp_dir, file.filename)
+    KAGGLE_URL = "https://pessimism-channel-sixtyfold.ngrok-free.dev/generate_feedback"
+
     try:
-        with open(tmp_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-        result = analyze_exercise_video(
-            video_path    = tmp_path,
-            exercise_name = exercise_name,
-            groq_api_key  = settings.GROQ_API_KEY,
-            output_dir    = tmp_dir,
-        )
-        if result.get("audio_path") and os.path.exists(result["audio_path"]):
-            audio_dir  = "uploads/audio"
-            os.makedirs(audio_dir, exist_ok=True)
-            audio_dest = os.path.join(audio_dir, f"{current_user.id}_{exercise_name}.mp3")
-            shutil.copy(result["audio_path"], audio_dest)
-            result["audio_url"] = f"/exercise/audio/{current_user.id}_{exercise_name}.mp3"
-        else:
-            result["audio_url"] = None
-        result.pop("audio_path", None)
+        video_bytes = await file.read()
+        
+        import base64
+        import httpx
+        
+        video_b64 = base64.b64encode(video_bytes).decode('utf-8')
+        
+        payload = {
+            "exercise_name": exercise_name,
+            "video_base64": video_b64
+        }
+        
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            response = await client.post(
+                KAGGLE_URL,
+                json=payload,
+                headers={"Content-Type": "application/json"}
+            )
+        
+        if response.status_code != 200:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail=f"Kaggle endpoint error: {response.text}"
+            )
+        
+        result = response.json()
         return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Kaggle endpoint timed out after 180 seconds")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Could not reach Kaggle endpoint: {str(e)}")
+    
 
 @router.get("/audio/{filename}")
 def get_audio(filename: str):
