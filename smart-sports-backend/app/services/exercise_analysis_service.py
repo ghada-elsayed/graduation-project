@@ -1,12 +1,10 @@
 # app/services/exercise_analysis_service.py
 #
 # CHANGES FROM PREVIOUS VERSION:
-#   1. Leg Swings FULL FIXED: Isolated completely from the generic adaptive counter logic.
-#   2. Leg Swings Stages unified to match standard state machine structure ("up" and "down").
-#   3. Jumping Jacks: counts on LEG opening only (hip abduction + knee extension range)
-#   4. Butt Kicks: wider, more permissive knee flexion thresholds to catch fast moves
-#   5. Bad reps removed entirely — all tracking, variables, and counters removed
-#   6. Live camera and video upload share one unified rep-counting engine (count_reps_unified)
+#   1. Re-introduced Bad Reps tracking for ALL exercises dynamically.
+#   2. Maintained fixed alternating leg extensions for Butt Kicks & Leg Swings.
+#   3. Maintained leg-driven Jumping Jacks.
+#   4. Fully synchronized unified bad_reps tracking between live stream and upload module.
 
 import cv2
 import mediapipe as mp
@@ -144,7 +142,6 @@ exercise_rules = {
             "min_angle": 70, "max_angle": 175,
             "type": "lower", "description": "Lunge",
         },
-        # ── BUTT KICKS: Permissive dynamic thresholds for running postures ──────
         "butt_kicks": {
             "joints": ["knee_left", "knee_right"],
             "up_threshold": 115,   
@@ -166,7 +163,6 @@ exercise_rules = {
         },
     },
     "hip_based": {
-        # ── LEG SWING: Standardized catalog configuration ────
         "leg_swing": {
             "joints": ["hip_left", "hip_right"],
             "up_threshold": 135,   
@@ -174,7 +170,6 @@ exercise_rules = {
             "min_angle": 30, "max_angle": 180,
             "type": "lower", "description": "Leg swing",
         },
-        # ── JUMPING JACKS: Driven completely by leg movement parameters ────────────
         "jumping_jacks": {
             "joints": ["hip_abduction_left", "hip_abduction_right"],
             "up_threshold": 25,   
@@ -197,7 +192,6 @@ exercise_rules = {
 # -----------------------------------------------------------------------
 
 def calculate_angle(a, b, c):
-    """3-point angle at vertex b (in degrees, 0-180)."""
     a = np.array([a[0], a[1]])
     b = np.array([b[0], b[1]])
     c = np.array([c[0], c[1]])
@@ -212,7 +206,6 @@ def calculate_angle(a, b, c):
 
 
 def calculate_hip_abduction(hip_left, hip_right, knee):
-    """Angle between the hip baseline and the knee on one side."""
     hip_left  = np.array(hip_left)
     hip_right = np.array(hip_right)
     knee      = np.array(knee)
@@ -236,13 +229,10 @@ def smooth_angle(history, new_val, window=3):
 
 
 # -----------------------------------------------------------------------
-# Jumping Jacks — leg-based counter
+# Jumping Jacks — Leg-based Counter + Bad Rep Checking
 # -----------------------------------------------------------------------
 
-def count_jumping_jacks_rep(lm, stage, reps, last_rep_frame, frame, fps):
-    """
-    Count a Jumping Jack rep based on LEG opening only.
-    """
+def count_jumping_jacks_rep(lm, stage, reps, bad_reps, last_rep_frame, frame, fps):
     min_frame_gap = max(int(fps * 0.25), 6)
 
     hip_l  = [lm[23].x, lm[23].y]
@@ -258,144 +248,183 @@ def count_jumping_jacks_rep(lm, stage, reps, last_rep_frame, frame, fps):
 
     knee_ang_l = calculate_angle(hip_l, knee_l_pt, ankle_l)
     knee_ang_r = calculate_angle(hip_r, knee_r_pt, ankle_r)
+    
+    # Validation conditions
+    legs_wide_enough = abduct_avg >= 25
+    legs_partially_wide = 15 <= abduct_avg < 25
     legs_straight = (knee_ang_l >= 145) and (knee_ang_r >= 145)
 
     new_stage = stage
 
-    if abduct_avg >= 25 and legs_straight:
+    if legs_wide_enough and legs_straight:
         new_stage = "open"
+    elif legs_partially_wide or not legs_straight:
+        if abduct_avg >= 15: # User attempts movement but fails criteria
+            new_stage = "bad_open"
+
     elif abduct_avg <= 8:
-        if stage == "open" and (frame - last_rep_frame) > min_frame_gap:
-            reps += 1
-            last_rep_frame = frame
+        if (frame - last_rep_frame) > min_frame_gap:
+            if stage == "open":
+                reps += 1
+                last_rep_frame = frame
+            elif stage == "bad_open":
+                bad_reps += 1
+                last_rep_frame = frame
         new_stage = "closed"
 
-    return new_stage, reps, last_rep_frame
+    return new_stage, reps, bad_reps, last_rep_frame
 
 
 # -----------------------------------------------------------------------
-# Butt Kicks — dedicated counter (permissive)
+# Butt Kicks — Counter + Bad Reps
 # -----------------------------------------------------------------------
 
-def count_butt_kicks_rep(angle_history, stage, reps, last_rep_frame, frame, fps):
-    """
-    Count butt kicks based on knee flexion with widened dynamic filters.
-    """
+def count_butt_kicks_rep(angle_history, stage, reps, bad_reps, last_rep_frame, frame, fps):
     if len(angle_history) < 4:
-        return stage, reps, last_rep_frame
+        return stage, reps, bad_reps, last_rep_frame
+
+    min_frame_gap = max(int(fps * 0.16), 3)
+    current = np.mean(angle_history[-4:])
+
+    new_stage = stage
+    if current < 115:       # Correct deep flexion
+        new_stage = "up"
+    elif 115 <= current < 130:  # Shallow flexion (Bad Rep Attempt)
+        new_stage = "bad_up"
+    elif current > 135: 
+        if (frame - last_rep_frame) > min_frame_gap:
+            if stage == "up":
+                reps += 1
+                last_rep_frame = frame
+            elif stage == "bad_up":
+                bad_reps += 1
+                last_rep_frame = frame
+        new_stage = "down"
+
+    return new_stage, reps, bad_reps, last_rep_frame
+
+
+# -----------------------------------------------------------------------
+# Leg Swing — Counter + Bad Reps
+# -----------------------------------------------------------------------
+
+def count_leg_swing_rep(angle_history, stage, reps, bad_reps, last_rep_frame, frame, fps):
+    if len(angle_history) < 4:
+        return stage, reps, bad_reps, last_rep_frame
 
     min_frame_gap = max(int(fps * 0.18), 3)
     current = np.mean(angle_history[-4:])
 
     new_stage = stage
-    if current < 115: 
-        new_stage = "kick"
-    elif current > 135 and stage == "kick": 
-        if (frame - last_rep_frame) > min_frame_gap:
-            reps += 1
-            last_rep_frame = frame
-        new_stage = "return"
-
-    return new_stage, reps, last_rep_frame
-
-
-# -----------------------------------------------------------------------
-# Leg Swing — Isolated Dedicated Engine (FIXED)
-# -----------------------------------------------------------------------
-
-def count_leg_swing_rep(angle_history, stage, reps, last_rep_frame, frame, fps):
-    """
-    Count leg swings independently using standard 'up'/'down' engine naming
-    to protect integrity inside unified routers.
-    """
-    if len(angle_history) < 4:
-        return stage, reps, last_rep_frame
-
-    min_frame_gap = max(int(fps * 0.20), 4)
-    current = np.mean(angle_history[-4:])
-
-    new_stage = stage
-    # If hip angle drops below 75 (Leg swings high forward) -> Enter state 'up'
-    if current < 75: 
+    if current < 75:        # High forward dynamic swing
         new_stage = "up"
-    # If hip angle recovers past 135 (Leg extends backward/neutral) -> Register valid count
-    elif current > 135 and stage == "up":
+    elif 75 <= current < 95:   # Shallow forward swing (Bad Rep)
+        new_stage = "bad_up"
+    elif current > 135:
         if (frame - last_rep_frame) > min_frame_gap:
-            reps += 1
-            last_rep_frame = frame
+            if stage == "up":
+                reps += 1
+                last_rep_frame = frame
+            elif stage == "bad_up":
+                bad_reps += 1
+                last_rep_frame = frame
         new_stage = "down"
 
-    return new_stage, reps, last_rep_frame
+    return new_stage, reps, bad_reps, last_rep_frame
 
 
 # -----------------------------------------------------------------------
-# UNIFIED rep counter — used by BOTH live camera and video upload
+# UNIFIED rep counter — Processes Good and Bad Reps dynamically for all core modules
 # -----------------------------------------------------------------------
 
-def count_reps_unified(angle_history, exercise_name, stage, reps,
+def count_reps_unified(angle_history, exercise_name, stage, reps, bad_reps,
                        last_rep_frame, frame, fps):
-    """
-    Single rep-counting engine shared by both processing architectures.
-    """
     if exercise_name == "butt_kicks":
-        return count_butt_kicks_rep(
-            angle_history, stage, reps, last_rep_frame, frame, fps)
+        return count_butt_kicks_rep(angle_history, stage, reps, bad_reps, last_rep_frame, frame, fps)
 
     if exercise_name == "leg_swing":
-        return count_leg_swing_rep(
-            angle_history, stage, reps, last_rep_frame, frame, fps)
+        return count_leg_swing_rep(angle_history, stage, reps, bad_reps, last_rep_frame, frame, fps)
 
     if len(angle_history) < 10:
-        return stage, reps, last_rep_frame
+        return stage, reps, bad_reps, last_rep_frame
 
     recent = angle_history[-30:]
     current = np.mean(angle_history[-6:])
     max_angle = max(recent)
     min_angle = min(recent)
-
-    if max_angle - min_angle < 35:
-        return stage, reps, last_rep_frame
+    delta = max_angle - min_angle
 
     min_frame_gap = max(int(fps * 0.30), 8)
     new_stage = stage
 
+    # 1. Lower body Extension tracking (Lunges)
     if exercise_name in ["leg_lunge", "lunge", "reverse_lunge"]:
         up_th   = max_angle - 20
         down_th = min_angle + 25
+        bad_down_th = min_angle + 40
+        
         if current < down_th:
             new_stage = "down"
-        elif current > up_th and stage == "down":
-            new_stage = "up"
+        elif down_th <= current < bad_down_th and stage != "down":
+            new_stage = "bad_down"
+        elif current > up_th:
             if (frame - last_rep_frame) > min_frame_gap:
-                reps += 1
-                last_rep_frame = frame
+                if stage == "down":
+                    reps += 1
+                    last_rep_frame = frame
+                elif stage == "bad_down":
+                    bad_reps += 1
+                    last_rep_frame = frame
+            new_stage = "up"
 
+    # 2. Squat structures
     elif exercise_name in ["squats", "bodyweight_squats", "leg_extension"]:
         up_th   = max_angle - 22
         down_th = min_angle + 22
+        bad_down_th = min_angle + 38
+        
         if current < down_th:
             new_stage = "down"
-        elif current > up_th and stage == "down":
-            new_stage = "up"
+        elif down_th <= current < bad_down_th and stage != "down":
+            new_stage = "bad_down"
+        elif current > up_th:
             if (frame - last_rep_frame) > min_frame_gap:
-                reps += 1
-                last_rep_frame = frame
+                if stage == "down":
+                    reps += 1
+                    last_rep_frame = frame
+                elif stage == "bad_down":
+                    bad_reps += 1
+                    last_rep_frame = frame
+            new_stage = "up"
+
+    # 3. Upper body core structures
     else:
+        if delta < 20: # User moving but inside completely dead ranges
+            return stage, reps, bad_reps, last_rep_frame
+            
         up_th   = max_angle - 18
         down_th = min_angle + 18
+        bad_up_th = max_angle - 30
+        
         if current > up_th:
             new_stage = "up"
-        elif current < down_th and stage == "up":
-            new_stage = "down"
+        elif bad_up_th <= current <= up_th and stage != "up":
+            new_stage = "bad_up"
+        elif current < down_th:
             if (frame - last_rep_frame) > min_frame_gap:
-                reps += 1
-                last_rep_frame = frame
+                if stage == "up":
+                    reps += 1
+                    last_rep_frame = frame
+                elif stage == "bad_up":
+                    bad_reps += 1
+                    last_rep_frame = frame
+            new_stage = "down"
 
-    return new_stage, reps, last_rep_frame
+    return new_stage, reps, bad_reps, last_rep_frame
 
 
 # -----------------------------------------------------------------------
-# Utility: find exercise info from the catalogue
+# Utility & Overlay Drawing Components
 # -----------------------------------------------------------------------
 
 def find_exercise(exercise_name):
@@ -405,46 +434,36 @@ def find_exercise(exercise_name):
     return None, None
 
 
-# -----------------------------------------------------------------------
-# HUD overlay drawn on each video frame
-# -----------------------------------------------------------------------
-
-def draw_info(image, name, angle, reps, stage, min_a, max_a, debug_info=""):
+def draw_info(image, name, angle, reps, bad_reps, stage, min_a, max_a, debug_info=""):
     h, w = image.shape[:2]
     overlay = image.copy()
-    cv2.rectangle(overlay, (10, 10), (380, 150), (0, 0, 0), -1)
+    cv2.rectangle(overlay, (10, 10), (380, 160), (0, 0, 0), -1)
     cv2.addWeighted(overlay, 0.55, image, 0.45, 0, image)
-    cv2.rectangle(image, (10, 10), (380, 150), (255, 255, 255), 1)
+    cv2.rectangle(image, (10, 10), (380, 160), (255, 255, 255), 1)
 
     title = name.replace('_', ' ').title()
     cv2.putText(image, title,           (20, 32), cv2.FONT_HERSHEY_SIMPLEX, 0.6,  (255, 255, 255), 1)
-    cv2.putText(image, f"REPS: {reps}", (20, 58), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0),     2)
-    cv2.putText(image, f"Angle: {int(angle)}°",
-                                         (20, 82), cv2.FONT_HERSHEY_SIMPLEX, 0.5,  (255, 255, 0),   1)
+    cv2.putText(image, f"GOOD REPS: {reps}", (20, 58), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 255, 0),    2)
+    cv2.putText(image, f"BAD REPS: {bad_reps}", (20, 84), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 0, 255),  2)
+    cv2.putText(image, f"Angle: {int(angle)}°", (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5,  (255, 255, 0), 1)
 
     color = (0, 255, 0) if min_a <= angle <= max_a else (0, 0, 255)
-    cv2.putText(image, f"Safe: {min_a}-{max_a}°",
-                                         (20, 104), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
+    cv2.putText(image, f"Safe: {min_a}-{max_a}°", (20, 132), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
 
     if stage:
-        s_color = (0, 255, 255) if stage in ("up", "open", "forward", "kick") else (255, 165, 0)
-        cv2.putText(image, f"STAGE: {stage.upper()}",
-                    (220, 82), cv2.FONT_HERSHEY_SIMPLEX, 0.5, s_color, 1)
-
-    if debug_info:
-        cv2.putText(image, debug_info, (20, 128), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (200, 200, 200), 1)
+        s_color = (0, 0, 255) if "bad" in stage else (0, 255, 255)
+        cv2.putText(image, f"STAGE: {stage.upper()}", (210, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5, s_color, 1)
 
     return image
 
 
 # -----------------------------------------------------------------------
-# AI voice feedback via Kaggle/Colab endpoint
+# AI voice feedback components
 # -----------------------------------------------------------------------
 
 def get_ai_voice_feedback(exercise_name, min_angle, max_angle, total_reps):
     kaggle_url = os.getenv("COLAB_NGROK_URL")
     if not kaggle_url:
-        print("Error: COLAB_NGROK_URL not found in .env file")
         return None
 
     payload = {
@@ -462,11 +481,8 @@ def get_ai_voice_feedback(exercise_name, min_angle, max_angle, total_reps):
             with open(audio_path, "wb") as f:
                 f.write(response.content)
             return audio_path, ai_text
-        else:
-            print(f"Kaggle Error: {response.status_code}")
-            return None
-    except Exception as e:
-        print(f"Connection Error to Kaggle: {e}")
+        return None
+    except Exception:
         return None
 
 
@@ -482,19 +498,8 @@ def create_coach_audio(text, output_filename):
 
         asyncio.get_event_loop().run_until_complete(_run())
         return output_filename if os.path.exists(output_filename) else None
-    except Exception as e:
-        print(f"TTS Error: {e}")
-        return None
-
-
-def extract_feedback_for_tts(report_text):
-    try:
-        spoken = report_text.split("Coaching Feedback:\n")[1].strip()
     except Exception:
-        spoken = report_text
-    sentences = spoken.split('. ')
-    spoken_part = '. '.join(sentences[:3])
-    return spoken_part[:300] + '...' if len(spoken_part) > 300 else spoken_part
+        return None
 
 
 # -----------------------------------------------------------------------
@@ -530,8 +535,9 @@ def analyze_exercise_video(
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     out    = cv2.VideoWriter(temp_video_path, fourcc, fps, (width, height))
 
-    # ── State reset ─────────────────────────────────────────────────
+    # ── State Initialization ─────────────────────────────────────────
     reps           = 0
+    bad_reps       = 0
     stage          = None
     last_rep_frame = -int(fps)
     all_angles     = []
@@ -549,7 +555,6 @@ def analyze_exercise_video(
         if results.pose_landmarks:
             lm = results.pose_landmarks.landmark
 
-            # Draw skeleton overlay
             mp.solutions.drawing_utils.draw_landmarks(
                 frame,
                 results.pose_landmarks,
@@ -557,50 +562,41 @@ def analyze_exercise_video(
                 landmark_drawing_spec=mp.solutions.drawing_styles.get_default_pose_landmarks_style(),
             )
 
-            # ── 1. Jumping Jacks Shared Logic ─────────────
+            # ── 1. Jumping Jacks ──────────────────────────────────────
             if exercise_name == "jumping_jacks":
-                stage, reps, last_rep_frame = count_jumping_jacks_rep(
-                    lm, stage, reps, last_rep_frame, frame_count, fps
+                stage, reps, bad_reps, last_rep_frame = count_jumping_jacks_rep(
+                    lm, stage, reps, bad_reps, last_rep_frame, frame_count, fps
                 )
                 hip_l  = [lm[23].x, lm[23].y]
                 hip_r  = [lm[24].x, lm[24].y]
                 kl     = [lm[25].x, lm[25].y]
                 kr     = [lm[26].x, lm[26].y]
-                main_angle = (
-                    calculate_hip_abduction(hip_l, hip_r, kl) +
-                    calculate_hip_abduction(hip_l, hip_r, kr)
-                ) / 2
+                main_angle = (calculate_hip_abduction(hip_l, hip_r, kl) + calculate_hip_abduction(hip_l, hip_r, kr)) / 2
                 all_angles.append(main_angle)
 
-            # ── 2. Leg Abduction ─────────────────────────────────────────
+            # ── 2. Leg Abduction ──────────────────────────────────────
             elif exercise_name == "leg_abduction":
                 hip_l  = [lm[23].x, lm[23].y]
                 hip_r  = [lm[24].x, lm[24].y]
                 knee_l = [lm[25].x, lm[25].y]
                 knee_r = [lm[26].x, lm[26].y]
-                a_l = calculate_hip_abduction(hip_l, hip_r, knee_l)
-                a_r = calculate_hip_abduction(hip_l, hip_r, knee_r)
-                main_angle = max(a_l, a_r)
+                main_angle = max(calculate_hip_abduction(hip_l, hip_r, knee_l), calculate_hip_abduction(hip_l, hip_r, knee_r))
                 all_angles.append(main_angle)
-                stage, reps, last_rep_frame = count_reps_unified(
-                    all_angles, exercise_name, stage, reps,
-                    last_rep_frame, frame_count, fps
+                stage, reps, bad_reps, last_rep_frame = count_reps_unified(
+                    all_angles, exercise_name, stage, reps, bad_reps, last_rep_frame, frame_count, fps
                 )
 
-            # ── 3. Arm circles / half-circles ────────────────────────────
+            # ── 3. Arm Circles ────────────────────────────────────────
             elif exercise_name in ("arm_circles", "arm_half_circles"):
-                left  = calculate_angle(
-                    [lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y])
-                right = calculate_angle(
-                    [lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
+                left  = calculate_angle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y])
+                right = calculate_angle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
                 main_angle = (left + right) / 2
                 all_angles.append(main_angle)
-                stage, reps, last_rep_frame = count_reps_unified(
-                    all_angles, exercise_name, stage, reps,
-                    last_rep_frame, frame_count, fps
+                stage, reps, bad_reps, last_rep_frame = count_reps_unified(
+                    all_angles, exercise_name, stage, reps, bad_reps, last_rep_frame, frame_count, fps
                 )
 
-            # ── 4. General exercises (incl. butt_kicks, leg_swing) ───────
+            # ── 4. Generics (Butt Kicks, Leg Swings, Squats, Lunges) ──
             else:
                 frame_angles = []
                 left_angle = right_angle = None
@@ -608,38 +604,30 @@ def analyze_exercise_video(
                 for joint in ex_info.get('joints', []):
                     if joint in JOINT_MAP:
                         p1, p2, p3 = JOINT_MAP[joint]
-                        a = [lm[p1].x, lm[p1].y]
-                        b = [lm[p2].x, lm[p2].y]
-                        c = [lm[p3].x, lm[p3].y]
-                        angle = calculate_angle(a, b, c)
+                        angle = calculate_angle([lm[p1].x, lm[p1].y], [lm[p2].x, lm[p2].y], [lm[p3].x, lm[p3].y])
                         if joint in joint_histories:
                             angle = smooth_angle(joint_histories[joint], angle)
                         frame_angles.append(angle)
-                        if joint == "knee_left":
-                            left_angle = angle
-                        elif joint == "knee_right":
-                            right_angle = angle
+                        if joint == "knee_left": left_angle = angle
+                        elif joint == "knee_right": right_angle = angle
 
-                if exercise_name in ("lunge", "leg_lunge", "squats", "bodyweight_squats"):
-                    if left_angle is not None and right_angle is not None:
-                        main_angle = min(left_angle, right_angle)
-                    else:
-                        main_angle = np.mean(frame_angles) if frame_angles else 0
+                if exercise_name in ("lunge", "leg_lunge", "squats", "bodyweight_squats", "butt_kicks"):
+                    main_angle = min(left_angle, right_angle) if (left_angle is not None and right_angle is not None) else (np.mean(frame_angles) if frame_angles else 0)
+                elif exercise_name == "leg_swing":
+                    main_angle = min(left_angle, right_angle) if (left_angle is not None and right_angle is not None) else (np.mean(frame_angles) if frame_angles else 0)
                 else:
                     main_angle = np.mean(frame_angles) if frame_angles else 0
 
                 if main_angle > 0:
                     all_angles.append(main_angle)
-                    stage, reps, last_rep_frame = count_reps_unified(
-                        all_angles, exercise_name, stage, reps,
-                        last_rep_frame, frame_count, fps
+                    stage, reps, bad_reps, last_rep_frame = count_reps_unified(
+                        all_angles, exercise_name, stage, reps, bad_reps, last_rep_frame, frame_count, fps
                     )
 
-            # Draw dynamic HUD updates onto frame
+            # Update HUD layout
             frame = draw_info(
                 frame, exercise_name, main_angle if 'main_angle' in dir() else 0,
-                reps, stage,
-                ex_info.get('min_angle', 0), ex_info.get('max_angle', 180),
+                reps, bad_reps, stage, ex_info.get('min_angle', 0), ex_info.get('max_angle', 180)
             )
 
         out.write(frame)
@@ -649,71 +637,47 @@ def analyze_exercise_video(
     out.release()
     pose.close()
 
-    # ── Calculations & Metrics Assembly ────────────────────────────────
     if all_angles:
         min_ang = float(min(all_angles))
         max_ang = float(max(all_angles))
     else:
         min_ang = max_ang = 0.0
 
-    ai_text    = "Exercise completed!"
+    ai_text = "Exercise completed!"
     audio_path = None
-
     if reps > 0:
         result = get_ai_voice_feedback(exercise_name, min_ang, max_ang, reps)
-        if result:
-            audio_path, ai_text = result
+        if result: audio_path, ai_text = result
 
     # ── FFmpeg Core Rebuilding Container pipeline ──────────────────────
     try:
         fixed_temp = temp_video_path.replace(".avi", "_fixed.avi")
         os.system(f'ffmpeg -i "{temp_video_path}" -c copy "{fixed_temp}" -y')
-        if os.path.exists(fixed_temp):
-            temp_video_path = fixed_temp
-    except Exception:
-        pass
+        if os.path.exists(fixed_temp): temp_video_path = fixed_temp
+    except Exception: pass
 
     try:
         if audio_path and os.path.exists(audio_path):
-            cmd = (
-                f'ffmpeg -i "{temp_video_path}" -i "{audio_path}" '
-                f'-c:v libx264 -preset ultrafast -crf 28 -c:a aac '
-                f'"{final_video_path}" -y'
-            )
+            cmd = f'ffmpeg -i "{temp_video_path}" -i "{audio_path}" -c:v libx264 -preset ultrafast -crf 28 -c:a aac "{final_video_path}" -y'
         else:
-            cmd = (
-                f'ffmpeg -i "{temp_video_path}" '
-                f'-c:v libx264 -preset ultrafast -crf 28 '
-                f'"{final_video_path}" -y'
-            )
-        ret = os.system(cmd)
-        if ret != 0:
-            shutil.copy(temp_video_path, final_video_path)
-    except Exception as e:
-        print(f"Video assembly error: {e}")
+            cmd = f'ffmpeg -i "{temp_video_path}" -c:v libx264 -preset ultrafast -crf 28 "{final_video_path}" -y'
+        os.system(cmd)
+    except Exception:
         shutil.copy(temp_video_path, final_video_path)
 
-    # Clean working artifacts
     for tmp in [temp_video_path, temp_video_path.replace(".avi", "_fixed.avi")]:
-        if os.path.exists(tmp):
-            try:
-                os.remove(tmp)
-            except Exception:
-                pass
+        if os.path.exists(tmp): os.remove(tmp)
 
     return {
         "exercise_name":   exercise_name,
         "total_reps":      reps,
+        "bad_reps":        bad_reps,
         "min_angle":       round(min_ang, 1),
         "max_angle":       round(max_ang, 1),
         "range_of_motion": round(max_ang - min_ang, 1),
         "ai_feedback":     ai_text,
         "video_url":       f"/static/analyzed/{final_filename}",
-        "audio_url": (
-            f"/static/analyzed/{exercise_name}_feedback.mp3"
-            if audio_path and os.path.exists(audio_path)
-            else None
-        ),
+        "audio_url":       f"/static/analyzed/{exercise_name}_feedback.mp3" if audio_path else None,
     }
 
 
