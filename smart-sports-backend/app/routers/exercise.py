@@ -4,11 +4,11 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import os, shutil
-import httpx
+import uuid
 from app.database import get_db
 from app.core.security import decode_token
 from app.models.user import User
-from app.services.exercise_analysis_service import get_all_exercises, get_ai_voice_feedback
+from app.services.exercise_analysis_service import analyze_exercise_video, get_all_exercises, get_ai_voice_feedback
 
 router   = APIRouter(prefix="/exercise", tags=["Exercise Analysis"])
 security = HTTPBearer()
@@ -76,44 +76,72 @@ async def analyze_exercise(
     db:            Session    = Depends(get_db),
     current_user:  User       = Depends(get_current_user)
 ):
-    if not file.filename.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')):
+    filename = file.filename or ""
+    if not filename.lower().endswith(('.mp4', '.avi', '.mov', '.mkv', '.webm')):
         raise HTTPException(status_code=400, detail="Only video files allowed")
 
-    KAGGLE_URL = "https://pessimism-channel-sixtyfold.ngrok-free.dev/generate_feedback"
+    supported_names = {exercise["name"] for exercise in get_all_exercises()}
+    if exercise_name not in supported_names:
+        raise HTTPException(status_code=400, detail=f"Exercise '{exercise_name}' not found")
 
+    upload_dir = os.path.join("uploads", "exercise")
+    os.makedirs(upload_dir, exist_ok=True)
+    _, ext = os.path.splitext(filename)
+    temp_video_path = os.path.join(upload_dir, f"{current_user.id}_{exercise_name}_{uuid.uuid4().hex}{ext}")
+
+    video_saved = False
     try:
-        video_bytes = await file.read()
-        
-        import base64
-        import httpx
-        
-        video_b64 = base64.b64encode(video_bytes).decode('utf-8')
-        
-        payload = {
-            "exercise_name": exercise_name,
-            "video_base64": video_b64
-        }
-        
-        async with httpx.AsyncClient(timeout=180.0) as client:
-            response = await client.post(
-                KAGGLE_URL,
-                json=payload,
-                headers={"Content-Type": "application/json"}
-            )
-        
-        if response.status_code != 200:
-            raise HTTPException(
-                status_code=response.status_code,
-                detail=f"Kaggle endpoint error: {response.text}"
-            )
-        
-        result = response.json()
-        return result
+        with open(temp_video_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        video_saved = True
 
-    except httpx.TimeoutException:
-        raise HTTPException(status_code=504, detail="Kaggle endpoint timed out after 180 seconds")
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=502, detail=f"Could not reach Kaggle endpoint: {str(e)}")
+        result = analyze_exercise_video(
+            video_path=temp_video_path,
+            exercise_name=exercise_name,
+            groq_api_key=os.getenv("GROQ_API_KEY", ""),
+        )
+
+        if result.get("error"):
+            raise HTTPException(status_code=400, detail=result["error"])
+
+        good_reps = int(result.get("total_reps", 0) or 0)
+        bad_reps = int(result.get("bad_reps", 0) or 0)
+        total_reps = good_reps + bad_reps
+        result["good_reps"] = good_reps
+        result["bad_reps"] = bad_reps
+        result["total_reps"] = total_reps
+
+        if total_reps == 0:
+            result["ai_feedback"] = "No repetitions detected. Try again!"
+            result["audio_url"] = None
+            return result
+
+        feedback = get_ai_voice_feedback(
+            exercise_name=exercise_name,
+            total_reps=total_reps,
+            min_angle=result.get("min_angle", 0),
+            max_angle=result.get("max_angle", 0),
+        )
+
+        if feedback:
+            audio_path, ai_text = feedback
+            result["ai_feedback"] = ai_text
+
+            if audio_path and os.path.exists(audio_path):
+                audio_dir = "uploads/audio"
+                os.makedirs(audio_dir, exist_ok=True)
+                audio_dest = os.path.join(audio_dir, f"{current_user.id}_{exercise_name}_upload.mp3")
+                shutil.copy(audio_path, audio_dest)
+                result["audio_url"] = f"/exercise/audio/{current_user.id}_{exercise_name}_upload.mp3"
+
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if video_saved and os.path.exists(temp_video_path):
+            os.remove(temp_video_path)
     
 
 @router.get("/audio/{filename}")

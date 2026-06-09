@@ -687,9 +687,16 @@ export default function ExerciseCoach() {
               <h4 style={{ fontWeight:700, fontSize:".88rem", color:"#1a2332", marginBottom:"1rem" }}>
                 📊 {result.exercise_name?.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())} — Results
               </h4>
-              <div style={{ display:"flex", gap:"1rem", marginBottom:"1rem" }}>
-                {[["Reps",result.total_reps,"#2563eb"],["Min°",result.min_angle,"#f97316"],["Max°",result.max_angle,"#10b981"],["ROM°",result.range_of_motion,"#8b5cf6"]].map(([l,v,c])=>(
-                  <div key={l} style={{ flex:1, background:"#f8fafc", borderRadius:10, padding:".75rem", textAlign:"center", border:"1px solid #e2eaf2" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(92px, 1fr))", gap:"1rem", marginBottom:"1rem" }}>
+                {[
+                  ["Total Reps", result.total_reps, "#2563eb"],
+                  ["Good Reps", result.good_reps ?? result.total_reps, "#10b981"],
+                  ["Bad Reps", result.bad_reps ?? 0, "#ef4444"],
+                  ["Min°", result.min_angle, "#f97316"],
+                  ["Max°", result.max_angle, "#8b5cf6"],
+                  ["ROM°", result.range_of_motion, "#06b6d4"],
+                ].map(([l,v,c])=>(
+                  <div key={l} style={{ background:"#f8fafc", borderRadius:10, padding:".75rem", textAlign:"center", border:"1px solid #e2eaf2" }}>
                     <div style={{ fontWeight:800, fontSize:"1.3rem", color:c }}>{v}</div>
                     <div style={{ fontSize:".65rem", color:"#64748b" }}>{l}</div>
                   </div>
