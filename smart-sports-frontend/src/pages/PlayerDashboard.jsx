@@ -1460,40 +1460,7 @@ export default function PlayerDashboard() {
 
             {/* Recent Uploads + CV Applications */}
             <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:"1.25rem" }} className="grid-2col">
-              <div className="fu" style={{ background:"white", border:"1px solid #e2eaf2", borderRadius:14, padding:"1.25rem" }}>
-                <h3 style={{ fontWeight:700, fontSize:".88rem", color:"#1a2332", marginBottom:"1rem" }}>Recent Uploads & Achievements</h3>
-                <div style={{ display:"flex", gap:".75rem", flexWrap:"wrap" }}>
-                  {VIDEOS.map((v, i) => (
-                    <div key={i} className="video-card" style={{ flex:1, minWidth:120 }}>
-                      <div style={{ position:"relative" }}>
-                        <img src={v.img} alt={v.title} style={{ width:"100%", height:90, objectFit:"cover" }} />
-                        <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(0,0,0,.3)" }}>
-                          <div style={{ width:28, height:28, background:"rgba(255,255,255,.9)", borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:".7rem" }}>▶</div>
-                        </div>
-                      </div>
-                      <div style={{ padding:".6rem" }}>
-                        <div style={{ fontWeight:600, fontSize:".72rem", color:"#1a2332", lineHeight:1.3 }}>{v.title}</div>
-                        <div style={{ fontSize:".62rem", color:"#94a3b8", marginTop:".2rem" }}>{v.date}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ marginTop:"1rem", border:"2px dashed #e2eaf2", borderRadius:10, padding:"1rem", textAlign:"center", background:uploadDone?"#f0fdf4":"transparent" }}>
-                  {uploading ? (
-                    <div style={{ color:"#2563eb", fontSize:".8rem", fontWeight:600 }}>⏳ Uploading...</div>
-                  ) : uploadDone ? (
-                    <div style={{ color:"#16a34a", fontSize:".8rem", fontWeight:600 }}>✅ Video uploaded! AI analysis in progress...</div>
-                  ) : (
-                    <>
-                      <div style={{ fontSize:"1.5rem", marginBottom:".35rem" }}>📤</div>
-                      <div style={{ fontWeight:600, fontSize:".8rem", color:"#1a2332" }}>Upload New Video</div>
-                      <div style={{ fontSize:".7rem", color:"#94a3b8", marginTop:".2rem" }}>Click to upload</div>
-                      <input type="file" accept="video/*" onChange={handleUpload} style={{ marginTop:".75rem", fontSize:".75rem" }} />
-                    </>
-                  )}
-                </div>
-              </div>
+              
 
               {applications.length > 0 && (
                 <div className="fu" style={{ background:"white", border:"1px solid #e2eaf2", borderRadius:14, padding:"1.25rem" }}>

@@ -8,9 +8,37 @@ function calcAngle([ax, ay], [bx, by], [cx, cy]) {
   if (angle > 180) angle = 360 - angle;
   return angle;
 }
-function getTorsoLean([sx, sy], [hx, hy]) {
-  return Math.abs(Math.atan2(sx - hx, hy - sy) * 180 / Math.PI);
+function calcHipAbduction([hx, hy], [opp_hx, opp_hy], [kx, ky]) {
+  // Approximate abduction angle using the hip line and knee position
+  return Math.abs(calcAngle([opp_hx, opp_hy], [hx, hy], [kx, ky]) - 90);
 }
+
+const pt = (lm, index) => [lm[index].x, lm[index].y];
+const avg = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+const angleAt = (lm, a, b, c) => calcAngle(pt(lm, a), pt(lm, b), pt(lm, c));
+const both = (left, right) => (lm) => avg([left(lm), right(lm)]);
+const minBoth = (left, right) => (lm) => Math.min(left(lm), right(lm));
+
+const elbowAverage = both(
+  (lm) => angleAt(lm, 11, 13, 15),
+  (lm) => angleAt(lm, 12, 14, 16)
+);
+const shoulderAngleAverage = both(
+  (lm) => angleAt(lm, 13, 11, 23),
+  (lm) => angleAt(lm, 14, 12, 24)
+);
+const kneeMinimum = minBoth(
+  (lm) => angleAt(lm, 23, 25, 27),
+  (lm) => angleAt(lm, 24, 26, 28)
+);
+const hipMinimum = minBoth(
+  (lm) => angleAt(lm, 11, 23, 25),
+  (lm) => angleAt(lm, 12, 24, 26)
+);
+const hipAbductionLeft = (lm) => calcHipAbduction(pt(lm, 23), pt(lm, 24), pt(lm, 25));
+const hipAbductionRight = (lm) => calcHipAbduction(pt(lm, 24), pt(lm, 23), pt(lm, 26));
+const hipAbductionAverage = both(hipAbductionLeft, hipAbductionRight);
+const hipAbductionMaximum = (lm) => Math.max(hipAbductionLeft(lm), hipAbductionRight(lm));
 
 // ── Exercise configs ──────────────────────────────────────────
 const EXERCISES = {
@@ -18,240 +46,193 @@ const EXERCISES = {
     label: "Bicep Curl",
     upAngle: 40,
     downAngle: 150,
-    type: "curl",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-    getDrift: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[11].x, lm[11].y], [lm[13].x, lm[13].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[12].x, lm[12].y], [lm[14].x, lm[14].y])
-    ) / 2,
-    getSway: (lm) => (
-      getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]) +
-      getTorsoLean([lm[12].x, lm[12].y], [lm[24].x, lm[24].y])
-    ) / 2,
-  },
-  shoulder_press: {
-    label: "Shoulder Press",
-    upAngle: 160,
-    downAngle: 90,
-    type: "press_up",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-    getDrift: () => 0,
-    getSway: (lm) => getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]),
-  },
-  squats: {
-    label: "Squats",
-    upAngle: 160,
-    downAngle: 80,
-    type: "squat",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
+    badZone: { low: 55, high: 85 },
+    checkType: "up_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
   },
   pushups: {
     label: "Push-ups",
     upAngle: 160,
     downAngle: 80,
-    type: "press_up",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  leg_lunge: {
-    label: "Leg Lunge",
-    upAngle: 165,
-    downAngle: 95,
-    type: "squat",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  leg_extension: {
-    label: "Leg Extension",
-    upAngle: 160,
-    downAngle: 100,
-    type: "squat",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  bodyweight_squats: {
-    label: "Bodyweight Squats",
-    upAngle: 120,
-    downAngle: 60,
-    type: "squat",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  lunge: {
-    label: "Lunge",
-    upAngle: 140,
-    downAngle: 85,
-    type: "squat",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  high_knee: {
-    label: "High Knee",
-    upAngle: 80,
-    downAngle: 160,
-    type: "kick",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  butt_kicks: {
-    label: "Butt Kicks",
-    upAngle: 60,
-    downAngle: 150,
-    type: "kick",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  arm_abduction: {
-    label: "Arm Abduction",
-    upAngle: 80,
-    downAngle: 20,
-    type: "raise",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  shoulder_flexion: {
-    label: "Shoulder Flexion",
-    upAngle: 90,
-    downAngle: 10,
-    type: "raise",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[11].x, lm[11].y], [lm[13].x, lm[13].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[12].x, lm[12].y], [lm[14].x, lm[14].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  jumping_jacks: {
-    label: "Jumping Jacks",
-    upAngle: 140,
-    downAngle: 30,
-    type: "raise",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  lat_pulldown: {
-    label: "Lat Pulldown",
-    upAngle: 150,
-    downAngle: 60,
-    type: "curl",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  triceps_pushdown: {
-    label: "Triceps Pushdown",
-    upAngle: 160,
-    downAngle: 40,
-    type: "press_up",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
+    badZone: { low: 110, high: 130 },
+    checkType: "down_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
   },
   bench_press: {
     label: "Bench Press",
     upAngle: 150,
     downAngle: 80,
-    type: "press_up",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
+    badZone: { low: 110, high: 130 },
+    checkType: "down_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
   },
-  leg_swing: {
-    label: "Leg Swing",
+  shoulder_press: {
+    label: "Shoulder Press",
+    upAngle: 160,
+    downAngle: 90,
+    badZone: { low: 110, high: 130 },
+    checkType: "down_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
+  },
+  triceps_pushdown: {
+    label: "Triceps Pushdown",
+    upAngle: 160,
+    downAngle: 40,
+    badZone: { low: 55, high: 90 },
+    checkType: "down_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
+  },
+  lat_pulldown: {
+    label: "Lat Pulldown",
+    upAngle: 150,
+    downAngle: 60,
+    badZone: { low: 80, high: 110 },
+    checkType: "down_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
+  },
+  arm_abduction: {
+    label: "Arm Abduction",
     upAngle: 80,
+    downAngle: 20,
+    badZone: { low: 50, high: 79 },
+    checkType: "up_side",
+    requiredPoints: [13, 11, 23, 14, 12, 24],
+    getAngle: shoulderAngleAverage,
+  },
+  shoulder_flexion: {
+    label: "Shoulder Flexion",
+    upAngle: 90,
     downAngle: 10,
-    type: "raise",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[23].x, lm[23].y], [lm[25].x, lm[25].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[24].x, lm[24].y], [lm[26].x, lm[26].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  leg_abduction: {
-    label: "Leg Abduction",
-    upAngle: 30,
-    downAngle: 5,
-    type: "raise",
-    getAngle: (lm) => (
-      calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[24].x, lm[24].y]) +
-      calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[23].x, lm[23].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  arm_circles: {
-    label: "Arm Circles",
-    upAngle: 40,
-    downAngle: 130,
-    type: "curl",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
-  },
-  arm_half_circles: {
-    label: "Arm Half Circles",
-    upAngle: 60,
-    downAngle: 100,
-    type: "curl",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
+    badZone: { low: 60, high: 89 },
+    checkType: "up_side",
+    requiredPoints: [13, 11, 12, 14],
+    getAngle: both(
+      (lm) => angleAt(lm, 13, 11, 12),
+      (lm) => angleAt(lm, 14, 12, 11)
+    ),
   },
   arm_vw: {
     label: "Arm VW",
     upAngle: 120,
     downAngle: 60,
-    type: "raise",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[23].x, lm[23].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[24].x, lm[24].y])
-    ) / 2,
-    getDrift: () => 0, getSway: () => 0,
+    badZone: { low: 90, high: 119 },
+    checkType: "up_side",
+    requiredPoints: [13, 11, 23, 14, 12, 24],
+    getAngle: shoulderAngleAverage,
+  },
+  arm_circles: {
+    label: "Arm Circles",
+    upAngle: 60,
+    downAngle: 120,
+    badZone: { low: 40, high: 55 },
+    checkType: "up_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
+  },
+  arm_half_circles: {
+    label: "Arm Half Circles",
+    upAngle: 60,
+    downAngle: 120,
+    badZone: { low: 40, high: 55 },
+    checkType: "up_side",
+    requiredPoints: [11, 13, 15, 12, 14, 16],
+    getAngle: elbowAverage,
+  },
+  squats: {
+    label: "Squats",
+    upAngle: 160,
+    downAngle: 80,
+    badZone: { low: 105, high: 130 },
+    checkType: "down_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  bodyweight_squats: {
+    label: "Bodyweight Squats",
+    upAngle: 120,
+    downAngle: 60,
+    badZone: { low: 80, high: 100 },
+    checkType: "down_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  leg_lunge: {
+    label: "Leg Lunge",
+    upAngle: 165,
+    downAngle: 95,
+    badZone: { low: 115, high: 140 },
+    checkType: "down_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  lunge: {
+    label: "Lunge",
+    upAngle: 140,
+    downAngle: 85,
+    badZone: { low: 105, high: 120 },
+    checkType: "down_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  leg_extension: {
+    label: "Leg Extension",
+    upAngle: 160,
+    downAngle: 100,
+    badZone: { low: 130, high: 155 },
+    checkType: "up_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  high_knee: {
+    label: "High Knee",
+    upAngle: 80,
+    downAngle: 160,
+    badZone: { low: 80, high: 115 },
+    checkType: "up_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  butt_kicks: {
+    label: "Butt Kicks",
+    upAngle: 65,
+    downAngle: 140,
+    badZone: { low: 65, high: 95 },
+    checkType: "up_side",
+    requiredPoints: [23, 25, 27, 24, 26, 28],
+    getAngle: kneeMinimum,
+  },
+  leg_swing: {
+    label: "Leg Swing",
+    upAngle: 55,
+    downAngle: 130,
+    badZone: { low: 55, high: 80 },
+    checkType: "up_side",
+    requiredPoints: [11, 23, 25, 12, 24, 26],
+    getAngle: hipMinimum,
+  },
+  leg_abduction: {
+    label: "Leg Abduction",
+    upAngle: 30,
+    downAngle: 5,
+    badZone: { low: 15, high: 25 },
+    checkType: "up_side",
+    requiredPoints: [23, 24, 25, 26],
+    getAngle: hipAbductionMaximum,
+  },
+  jumping_jacks: {
+    label: "Jumping Jacks",
+    upAngle: 28,
+    downAngle: 8,
+    badZone: { low: 15, high: 27 },
+    checkType: "up_side",
+    requiredPoints: [23, 24, 25, 26],
+    getAngle: hipAbductionAverage,
   },
 };
 
@@ -282,11 +263,6 @@ const MOVENET_TO_MEDIAPIPE = {
   left_ankle: 27,
   right_ankle: 28,
 };
-
-const LOWER_BODY_EXERCISES = new Set([
-  "squats", "bodyweight_squats", "leg_lunge", "lunge", "leg_abduction",
-  "high_knee", "butt_kicks", "leg_extension", "leg_swing",
-]);
 
 function mapMoveNetToMediaPipe(keypoints, width, height) {
   const landmarks = Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }));
@@ -389,9 +365,7 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
         const currentEx = EXERCISES[selectedExercise] || EXERCISES.bicep_curl;
 
         try {
-          const requiredPoints = LOWER_BODY_EXERCISES.has(selectedExercise)
-            ? [23, 25, 27, 24, 26, 28]
-            : [11, 13, 15, 12, 14, 16];
+          const requiredPoints = currentEx.requiredPoints || [11, 13, 15, 12, 14, 16];
 
           if (!hasVisiblePoints(lm, requiredPoints)) {
             setDisplay(prev => ({ ...prev, warning: "Keep your full body visible" }));
@@ -408,84 +382,71 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
           const MIN_REP_GAP_MS = 1000;
           const upTh = currentEx.upAngle;
           const downTh = currentEx.downAngle;
-          const exType = currentEx.type || "curl";
+          const badZone = currentEx.badZone;
+          const checkType = currentEx.checkType;
 
           let warning = "";
-          if (exType === "curl") {
-            if (smoothed < upTh) {
-              s.stage = "up";
-            } else if (smoothed > downTh && s.stage === "up") {
-              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
-                if (s.currentRepForm === "Good") s.goodReps++;
-                else { s.badReps++; warning = "BAD FORM!"; }
-                s.lastRepTime = now;
-                s.currentRepForm = "Good";
-              }
-              s.stage = "down";
-            }
-          }
 
-          else if (exType === "press_up") {
+          if (checkType === "down_side") {
             if (smoothed < downTh) {
               s.stage = "down";
-            } else if (smoothed > upTh && s.stage === "down") {
+            } else if (badZone && smoothed >= badZone.low && smoothed <= badZone.high && s.stage !== "down") {
+              s.stage = "bad_down";
+            } else if (smoothed > upTh) {
               if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
-                if (s.currentRepForm === "Good") s.goodReps++;
-                else { s.badReps++; warning = "BAD FORM!"; }
+                if (s.stage === "down") {
+                  s.goodReps++;
+                  s.currentRepForm = "Good";
+                } else if (s.stage === "bad_down") {
+                  s.badReps++;
+                  warning = "BAD FORM: Go Deeper!";
+                  s.currentRepForm = "Bad";
+                }
                 s.lastRepTime = now;
-                s.currentRepForm = "Good";
               }
               s.stage = "up";
             }
-          }
-
-          else if (exType === "squat") {
-            if (smoothed < downTh) {
-              s.stage = "down";
-            } else if (smoothed > upTh && s.stage === "down") {
-              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
-                if (s.currentRepForm === "Good") s.goodReps++;
-                else { s.badReps++; warning = "BAD FORM!"; }
-                s.lastRepTime = now;
-                s.currentRepForm = "Good";
+          } else if (checkType === "up_side") {
+            const isTargetLowAngle = upTh < downTh;
+            if (isTargetLowAngle) {
+              if (smoothed < upTh) {
+                s.stage = "up";
+              } else if (badZone && smoothed >= badZone.low && smoothed <= badZone.high && s.stage !== "up") {
+                s.stage = "bad_up";
+              } else if (smoothed > downTh) {
+                if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                  if (s.stage === "up") {
+                    s.goodReps++;
+                    s.currentRepForm = "Good";
+                  } else if (s.stage === "bad_up") {
+                    s.badReps++;
+                    warning = "BAD FORM: Full Range!";
+                    s.currentRepForm = "Bad";
+                  }
+                  s.lastRepTime = now;
+                }
+                s.stage = "down";
               }
-              s.stage = "up";
-            }
-          }
-
-          else if (exType === "raise") {
-            if (smoothed > upTh) {
-              s.stage = "up";
-            } else if (smoothed < downTh && s.stage === "up") {
-              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
-                if (s.currentRepForm === "Good") s.goodReps++;
-                else { s.badReps++; warning = "BAD FORM!"; }
-                s.lastRepTime = now;
-                s.currentRepForm = "Good";
+            } else {
+              if (smoothed > upTh) {
+                s.stage = "up";
+              } else if (badZone && smoothed >= badZone.low && smoothed <= badZone.high && s.stage !== "up") {
+                s.stage = "bad_up";
+              } else if (smoothed < downTh) {
+                if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
+                  if (s.stage === "up") {
+                    s.goodReps++;
+                    s.currentRepForm = "Good";
+                  } else if (s.stage === "bad_up") {
+                    s.badReps++;
+                    warning = "BAD FORM: Full Range!";
+                    s.currentRepForm = "Bad";
+                  }
+                  s.lastRepTime = now;
+                }
+                s.stage = "down";
               }
-              s.stage = "down";
             }
-          }
-
-          else if (exType === "kick") {
-            if (smoothed < upTh) {
-              s.stage = "up";
-            } else if (smoothed > downTh && s.stage === "up") {
-              if (!s.lastRepTime || now - s.lastRepTime > MIN_REP_GAP_MS) {
-                if (s.currentRepForm === "Good") s.goodReps++;
-                else { s.badReps++; warning = "BAD FORM!"; }
-                s.lastRepTime = now;
-                s.currentRepForm = "Good";
-              }
-              s.stage = "down";
-            }
-          }
-
-          const avgDrift = currentEx.getDrift ? currentEx.getDrift(lm) : 0;
-          const avgSway  = currentEx.getSway  ? currentEx.getSway(lm)  : 0;
-          if (avgSway > 15 || avgDrift > 30) {
-            warning = "CHEATING!";
-            s.currentRepForm = "Bad";
           }
 
           // رسم الـ HUD
