@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from pydantic import BaseModel
 from app.database import get_db
-from app.schemas.user import UserCreate, UserLogin, Token, UserResponse
-from app.services.auth_service import register_user, login_user
+from app.schemas.user import UserCreate, UserLogin, ResetPassword, Token, UserResponse
+from app.services.auth_service import register_user, login_user, reset_user_password
 from app.core.security import decode_token
 from app.models.user import User
 from app.models.cv_application import CVApplication
@@ -37,6 +37,12 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "user": user
     }
+
+
+@router.post("/reset-password")
+def reset_password(data: ResetPassword, db: Session = Depends(get_db)):
+    reset_user_password(data.email, data.new_password, db)
+    return {"message": "Password reset successfully"}
 
 
 @router.get("/me", response_model=UserResponse)

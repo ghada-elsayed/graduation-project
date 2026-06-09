@@ -42,3 +42,14 @@ def login_user(email: str, password: str, db: Session):
     # عمل الـ token
     token = create_access_token({"sub": str(user.id), "role": user.role})
     return token, user
+
+
+def reset_user_password(email: str, new_password: str, db: Session):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Email not found")
+
+    user.hashed_password = hash_password(new_password)
+    db.commit()
+    db.refresh(user)
+    return user
