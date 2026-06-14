@@ -265,36 +265,66 @@ const EXERCISES = {
   //   },
   // },
 
-  jumping_jacks: {
-  label: "Jumping Jacks",
-  type: "jump",
+//   jumping_jacks: {
+//   label: "Jumping Jacks",
+//   type: "jump",
 
-  upThreshold: 0.28,
-  downThreshold: 0.06,
+//   upThreshold: 0.28,
+//   downThreshold: 0.06,
 
-  formCheck: (lm) => {
-    const left = lm[27];
-    const right = lm[28];
+//   formCheck: (lm) => {
+//     const left = lm[27];
+//     const right = lm[28];
 
-    const spread = Math.abs(left.x - right.x);
+//     const spread = Math.abs(left.x - right.x);
 
-    // فلتر بسيط يمنع الوقفة العشوائية
-    if (spread < 0.03) return "bad";
+//     // فلتر بسيط يمنع الوقفة العشوائية
+//     if (spread < 0.03) return "bad";
 
-    return "ok";
-  },
+//     return "ok";
+//   },
 
-  getAngle: (lm) => {
-    const left = lm[27];
-    const right = lm[28];
+//   getAngle: (lm) => {
+//     const left = lm[27];
+//     const right = lm[28];
 
-    // ده المؤشر الحقيقي للـ jumping jacks
-    return Math.abs(left.x - right.x);
-  },
-},
+//     // ده المؤشر الحقيقي للـ jumping jacks
+//     return Math.abs(left.x - right.x);
+//   },
+// },
+jumping_jacks: {
+    label: "Jumping Jacks",
+    type: "jump",
 
+    upAngle: 27,
+    downAngle: 14,
+    minGoodAngle: 25,
+    maxGoodAngle: 200,
 
-  // lat_pulldown: {
+    formCheck: (lm, smoothed) => {
+      const left = lm[27];
+      const right = lm[28];
+      const legsSpread = Math.abs(left.x - right.x) > 0.13;
+
+      const avgWristY = avg([lm[15].y, lm[16].y]);
+      const avgShoulderY = avg([lm[11].y, lm[12].y]);
+      const armsUp = avgWristY < avgShoulderY - 0.04;
+
+      // console.log("wrist-shoulder diff:", (avgWristY - avgShoulderY).toFixed(3), "| angle:", smoothed.toFixed(1));
+
+      const nearPeak = smoothed >= 25;
+      if (!nearPeak) return "ok";
+
+      if (legsSpread !== armsUp) return "bad";
+      return "ok";
+    },
+
+    getAngle: (lm) => {
+      const left = lm[27];
+      const right = lm[28];
+      return Math.abs(left.x - right.x) * 200;
+    },
+  },  // lat_pulldown: {
   //   label: "Lat Pulldown",
   //   upAngle: 150, downAngle: 75, type: "curl",
   //   minGoodAngle: 25, maxGoodAngle: 155,
@@ -405,62 +435,122 @@ const EXERCISES = {
 
 
 
-  leg_swing: {
-  label: "Leg Swing",
+//   leg_swing: {
+//   label: "Leg Swing",
 
-  upAngle: 105,
-  downAngle: 70,
+//   upAngle: 105,
+//   downAngle: 70,
 
-  type: "kick",
+//   type: "kick",
 
-  minGoodAngle: 100,
-  maxGoodAngle: 125,
+//   minGoodAngle: 100,
+//   maxGoodAngle: 125,
 
-  formCheck: (lm) => {
-    const kneeAngle = calcAngle(
-      [lm[23].x, lm[23].y],
-      [lm[25].x, lm[25].y],
-      [lm[27].x, lm[27].y]
-    );
+//   formCheck: (lm) => {
+//     const kneeAngle = calcAngle(
+//       [lm[23].x, lm[23].y],
+//       [lm[25].x, lm[25].y],
+//       [lm[27].x, lm[27].y]
+//     );
 
-    // اسمحي بثني بسيط للركبة
-    return kneeAngle < 120 ? "bad" : "ok";
+//     // اسمحي بثني بسيط للركبة
+//     return kneeAngle < 120 ? "bad" : "ok";
+//   },
+//   getAngle: (lm) =>
+//     calcAngle(
+//       [lm[11].x, lm[11].y],
+//       [lm[23].x, lm[23].y],
+//       [lm[27].x, lm[27].y]
+//     ),
+// },
+
+leg_swing: {
+    label: "Leg Swing",
+
+    upAngle: 105,
+    downAngle: 70,
+
+    type: "kick",
+
+    minGoodAngle: 100,
+    maxGoodAngle: 125,
+
+    formCheck: (lm) => {
+      const leftKnee = calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]);
+      const rightKnee = calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y]);
+      const minKnee = Math.min(leftKnee, rightKnee);
+
+      // اسمحي بثني بسيط للركبة
+      return minKnee < 120 ? "bad" : "ok";
+    },
+    getAngle: (lm) => {
+      const left = calcAngle([lm[11].x, lm[11].y], [lm[23].x, lm[23].y], [lm[27].x, lm[27].y]);
+      const right = calcAngle([lm[12].x, lm[12].y], [lm[24].x, lm[24].y], [lm[28].x, lm[28].y]);
+
+      // الرجل اللي بعيدة عن الـ rest angle (~180) هي اللي بترفع دلوقتي
+      const leftDist = Math.abs(180 - left);
+      const rightDist = Math.abs(180 - right);
+
+      return leftDist >= rightDist ? left : right;
+    },
   },
-  getAngle: (lm) =>
-    calcAngle(
-      [lm[11].x, lm[11].y],
-      [lm[23].x, lm[23].y],
-      [lm[27].x, lm[27].y]
-    ),
-},
 
-  leg_abduction: {
+//   leg_abduction: {
+//     label: "Leg Abduction",
+//     upAngle: 150,
+//   downAngle: 170,
+//   type: "kick",
+
+//   minGoodAngle: 140,
+//   maxGoodAngle: 155,
+
+//   formCheck: (lm) => {
+//     const kneeAngle = calcAngle(
+//       [lm[23].x, lm[23].y],
+//       [lm[25].x, lm[25].y],
+//       [lm[27].x, lm[27].y]
+//     );
+
+//     return kneeAngle < 135 ? "bad" : "ok";
+//   },
+
+//   getAngle: (lm) =>
+//     calcAngle(
+//       [lm[11].x, lm[11].y],
+//       [lm[23].x, lm[23].y],
+//       [lm[27].x, lm[27].y]
+//     ),
+// },
+leg_abduction: {
     label: "Leg Abduction",
     upAngle: 150,
-  downAngle: 170,
-  type: "kick",
+    downAngle: 170,
+    type: "kick",
 
-  minGoodAngle: 140,
-  maxGoodAngle: 155,
+    minGoodAngle: 140,
+    maxGoodAngle: 155,
 
-  formCheck: (lm) => {
-    const kneeAngle = calcAngle(
-      [lm[23].x, lm[23].y],
-      [lm[25].x, lm[25].y],
-      [lm[27].x, lm[27].y]
-    );
+    formCheck: (lm, smoothed) => {
+      const leftKnee = calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]);
+      const rightKnee = calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y]);
+      const minKnee = Math.min(leftKnee, rightKnee);
 
-    return kneeAngle < 135 ? "bad" : "ok";
+      console.log("leg_abduction | angle:", smoothed.toFixed(1), "| up:", 150, "| down:", 170, "| minKnee:", minKnee.toFixed(1));
+
+      return minKnee < 135 ? "bad" : "ok";
+    },
+
+    getAngle: (lm) => {
+      const left = calcAngle([lm[11].x, lm[11].y], [lm[23].x, lm[23].y], [lm[27].x, lm[27].y]);
+      const right = calcAngle([lm[12].x, lm[12].y], [lm[24].x, lm[24].y], [lm[28].x, lm[28].y]);
+
+      // الرجل اللي بعيدة عن وضع الراحة (~180) هي اللي بترفع دلوقتي
+      const leftDist = Math.abs(180 - left);
+      const rightDist = Math.abs(180 - right);
+
+      return leftDist >= rightDist ? left : right;
+    },
   },
-
-  getAngle: (lm) =>
-    calcAngle(
-      [lm[11].x, lm[11].y],
-      [lm[23].x, lm[23].y],
-      [lm[27].x, lm[27].y]
-    ),
-},
-
 // 1. الدوائر الكاملة: تعتمد على الـ Angle الدائرية (من 0 لـ 360 درجة) ونوعها circle
   arm_circles: {
     label: "Arm Circles",
@@ -1493,6 +1583,10 @@ export default function LiveCamera({ selectedExercise = "bicep_curl", token }) {
           else if (exType === "kick") {
             if (smoothed < upTh) { s.stage = "up"; }
             else if (smoothed > downTh && s.stage === "up") { countRep(); s.stage = "down"; }
+          }
+          else if (exType === "jump") {
+            if (smoothed > upTh) { s.stage = "up"; }
+            else if (smoothed < downTh && s.stage === "up") { countRep(); s.stage = "down"; }
           }
 
           // HUD
