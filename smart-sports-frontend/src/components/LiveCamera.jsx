@@ -74,17 +74,49 @@ const EXERCISES = {
     ) / 2,
   },
 
+  // leg_lunge: {
+  //   label: "Leg Lunge",
+  //   upAngle: 155, downAngle: 95, type: "squat",
+  //   minGoodAngle: 85, maxGoodAngle: 100,
+  //   formCheck: (lm, smoothed) => {
+  //     const minKnee = Math.min(
+  //       calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]),
+  //       calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
+  //     );
+  //     return smoothed < 100 && minKnee > 150 ? "bad" : "ok";
+  //   },
   leg_lunge: {
-    label: "Leg Lunge",
-    upAngle: 165, downAngle: 95, type: "squat",
-    minGoodAngle: 85, maxGoodAngle: 100,
-    formCheck: (lm, smoothed) => {
-      const minKnee = Math.min(
-        calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]),
-        calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
-      );
-      return smoothed < 110 && minKnee > 115 ? "bad" : "ok";
-    },
+  label: "Leg Lunge",
+
+  upAngle: 150,
+  downAngle: 120,
+
+  type: "squat",
+
+  minGoodAngle: 90,
+  maxGoodAngle: 140,
+
+  formCheck: (lm, smoothed) => {
+    const minKnee = Math.min(
+      calcAngle(
+        [lm[23].x, lm[23].y],
+        [lm[25].x, lm[25].y],
+        [lm[27].x, lm[27].y]
+      ),
+      calcAngle(
+        [lm[24].x, lm[24].y],
+        [lm[26].x, lm[26].y],
+        [lm[28].x, lm[28].y]
+      )
+    );
+
+    // فقط لو الركبة ما نزلتش كفاية
+    if (minKnee > 170) {
+      return "bad";
+    }
+
+    return "ok";
+  },
     getAngle: (lm) => (
       calcAngle([lm[23].x, lm[23].y], [lm[25].x, lm[25].y], [lm[27].x, lm[27].y]) +
       calcAngle([lm[24].x, lm[24].y], [lm[26].x, lm[26].y], [lm[28].x, lm[28].y])
@@ -262,16 +294,27 @@ const EXERCISES = {
 },
 
 
+  // lat_pulldown: {
+  //   label: "Lat Pulldown",
+  //   upAngle: 150, downAngle: 75, type: "curl",
+  //   minGoodAngle: 25, maxGoodAngle: 155,
+  //   formCheck: (lm) => getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]) > 155 ? "bad" : "ok",
+  //   getAngle: (lm) => (
+  //     calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
+  //     calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
+  //   ) / 2,
+  // },
+
   lat_pulldown: {
-    label: "Lat Pulldown",
-    upAngle: 150, downAngle: 75, type: "curl",
-    minGoodAngle: 25, maxGoodAngle: 155,
-    formCheck: (lm) => getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]) > 155 ? "bad" : "ok",
-    getAngle: (lm) => (
-      calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
-      calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
-    ) / 2,
-  },
+  label: "Lat Pulldown",
+  upAngle: 150, downAngle: 75, type: "curl",
+  minGoodAngle: 70, maxGoodAngle: 155,
+  formCheck: (lm) => getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]) > 300 ? "bad" : "ok",
+  getAngle: (lm) => (
+    calcAngle([lm[11].x, lm[11].y], [lm[13].x, lm[13].y], [lm[15].x, lm[15].y]) +
+    calcAngle([lm[12].x, lm[12].y], [lm[14].x, lm[14].y], [lm[16].x, lm[16].y])
+  ) / 2,
+},
 
   triceps_pushdown: {
     label: "Triceps Pushdown",
@@ -341,14 +384,37 @@ const EXERCISES = {
   //     [lm[25].x, lm[25].y]
   //   )
 
+  // leg_swing: {
+  // label: "Leg Swing",
+  // upAngle: 150,
+  // downAngle: 170,
+  // type: "kick",
+
+  // minGoodAngle: 140,
+  // maxGoodAngle: 155,
+
+  // formCheck: (lm) => {
+  //   const kneeAngle = calcAngle(
+  //     [lm[23].x, lm[23].y],
+  //     [lm[25].x, lm[25].y],
+  //     [lm[27].x, lm[27].y]
+  //   );
+
+  //   return kneeAngle < 135 ? "bad" : "ok";
+  // },
+
+
+
   leg_swing: {
   label: "Leg Swing",
-  upAngle: 150,
-  downAngle: 170,
+
+  upAngle: 105,
+  downAngle: 70,
+
   type: "kick",
 
-  minGoodAngle: 140,
-  maxGoodAngle: 155,
+  minGoodAngle: 100,
+  maxGoodAngle: 125,
 
   formCheck: (lm) => {
     const kneeAngle = calcAngle(
@@ -357,9 +423,9 @@ const EXERCISES = {
       [lm[27].x, lm[27].y]
     );
 
-    return kneeAngle < 135 ? "bad" : "ok";
+    // اسمحي بثني بسيط للركبة
+    return kneeAngle < 120 ? "bad" : "ok";
   },
-
   getAngle: (lm) =>
     calcAngle(
       [lm[11].x, lm[11].y],
@@ -713,11 +779,56 @@ function commitPrecisionRep(s, exerciseName, now, isGood) {
   return true;
 }
 
+// function updateButtKicks(lm, s, now) {
+//   const legs = getLegMetrics(lm);
+//   const p = getPrecisionState(s, "butt_kicks", now);
+//   const leg = p.side ? legs[p.side] : legs.active;
+//   let warning = "";
+
+//   if (p.stage === "start") {
+//     s.stage = "start";
+//     if (leg.knee < 110) {
+//       p.stage = "peak";
+//       p.side = leg.side;
+//       p.reachedMotion = true;
+//       p.reachedGood = leg.knee <= 70 && leg.hip >= 145;
+//       p.bad = leg.hip < 135;
+//     }
+//   } else {
+//     p.reachedMotion = p.reachedMotion || leg.knee < 110;
+//     p.reachedGood = p.reachedGood || (leg.knee <= 70 && leg.hip >= 145);
+//     p.bad = p.bad || leg.hip < 135;
+//     warning = p.bad ? "Keep the hip extended" : "";
+
+//     if (leg.knee >= 155) {
+//       const isGood = p.reachedGood && !p.bad;
+//       if (p.reachedMotion && commitPrecisionRep(s, "butt_kicks", now, isGood) && !isGood) {
+//         warning = "Bend the knee more";
+//       }
+//       s.stage = "start";
+//     } else {
+//       s.stage = "peak";
+//     }
+//   }
+
+//   return { handled: true, angle: leg.knee, warning };
+// }
+
 function updateButtKicks(lm, s, now) {
   const legs = getLegMetrics(lm);
   const p = getPrecisionState(s, "butt_kicks", now);
   const leg = p.side ? legs[p.side] : legs.active;
   let warning = "";
+
+  // ── فحص إضافي: هل الركبة اترفعت للأمام؟ (high knee motion)
+  const leftKneeY  = lm[25].y;
+  const rightKneeY = lm[26].y;
+  const leftHipY   = lm[23].y;
+  const rightHipY  = lm[24].y;
+  // لو الركبة ارتفعت فوق الـ hip (y أصغر = أعلى في الصورة) → high knee
+  const kneeRaisedForward =
+    leftKneeY  < leftHipY  - 0.05 ||
+    rightKneeY < rightHipY - 0.05;
 
   if (p.stage === "start") {
     s.stage = "start";
@@ -725,19 +836,24 @@ function updateButtKicks(lm, s, now) {
       p.stage = "peak";
       p.side = leg.side;
       p.reachedMotion = true;
-      p.reachedGood = leg.knee <= 70 && leg.hip >= 145;
-      p.bad = leg.hip < 135;
+      p.reachedGood = leg.knee <= 70 && leg.hip >= 145 && !kneeRaisedForward;
+      p.bad = leg.hip < 135 || kneeRaisedForward;
     }
   } else {
     p.reachedMotion = p.reachedMotion || leg.knee < 110;
-    p.reachedGood = p.reachedGood || (leg.knee <= 70 && leg.hip >= 145);
-    p.bad = p.bad || leg.hip < 135;
-    warning = p.bad ? "Keep the hip extended" : "";
+    p.reachedGood   = p.reachedGood   || (leg.knee <= 70 && leg.hip >= 145 && !kneeRaisedForward);
+    p.bad           = p.bad            || leg.hip < 135 || kneeRaisedForward;
+
+    if (p.bad && kneeRaisedForward) {
+      warning = "Don't raise the knee forward!";
+    } else if (p.bad) {
+      warning = "Keep the hip extended";
+    }
 
     if (leg.knee >= 155) {
       const isGood = p.reachedGood && !p.bad;
       if (p.reachedMotion && commitPrecisionRep(s, "butt_kicks", now, isGood) && !isGood) {
-        warning = "Bend the knee more";
+        warning = kneeRaisedForward ? "Don't raise the knee forward!" : "Bend the knee more";
       }
       s.stage = "start";
     } else {
@@ -748,92 +864,314 @@ function updateButtKicks(lm, s, now) {
   return { handled: true, angle: leg.knee, warning };
 }
 
+
+// function updateLatPulldown(lm, s, now) {
+//   const arms = getArmMetrics(lm);
+//   const p = getPrecisionState(s, "lat_pulldown", now);
+//   const torsoLean = getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]);
+//   const handsAtChest = arms.wristY > arms.shoulderY + 0.04 && arms.wristY < arms.hipY - 0.03;
+//   const elbowsDrivenDown = arms.elbowY > arms.shoulderY + 0.04;
+//   let warning = "";
+
+//   if (arms.elbowDiff > 25 || arms.wristYDiff > 0.12) {
+//     p.bad = true;
+//     warning = "Pull both arms evenly";
+//   }
+//   if (torsoLean > 20) {
+//     p.bad = true;
+//     warning = "Keep your torso upright";
+//   }
+
+//   if (p.stage === "start") {
+//     s.stage = "extended";
+//     if (arms.avgElbow < 130) {
+//       p.stage = "pull";
+//       p.reachedMotion = true;
+//     }
+//   } else {
+//     p.reachedMotion = p.reachedMotion || arms.avgElbow < 125;
+//     p.reachedGood = p.reachedGood || (
+//       arms.avgElbow <= 80 &&
+//       arms.avgShoulder <= 105 &&
+//       handsAtChest &&
+//       elbowsDrivenDown
+//     );
+
+//     if (arms.avgElbow >= 160 && arms.avgShoulder >= 135) {
+//       const isGood = p.reachedGood && !p.bad;
+//       if (p.reachedMotion && commitPrecisionRep(s, "lat_pulldown", now, isGood) && !isGood) {
+//         warning = "Finish the pull to upper chest";
+//       }
+//       s.stage = "extended";
+//     } else {
+//       s.stage = "pull";
+//     }
+//   }
+
+//   return { handled: true, angle: arms.avgElbow, warning };
+// }
 function updateLatPulldown(lm, s, now) {
   const arms = getArmMetrics(lm);
   const p = getPrecisionState(s, "lat_pulldown", now);
-  const torsoLean = getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]);
-  const handsAtChest = arms.wristY > arms.shoulderY + 0.04 && arms.wristY < arms.hipY - 0.03;
-  const elbowsDrivenDown = arms.elbowY > arms.shoulderY + 0.04;
+  const torsoLean = getTorsoLean(
+    [lm[11].x, lm[11].y],
+    [lm[23].x, lm[23].y]
+  );
+
   let warning = "";
 
-  if (arms.elbowDiff > 25 || arms.wristYDiff > 0.12) {
+  // مرونة أكبر في تقييم الحركة
+  const goodPeak = arms.avgElbow <= 135;
+  const extended = arms.avgElbow >= 145;
+
+  // Form checks مرنة
+  if (arms.elbowDiff > 45) {
     p.bad = true;
     warning = "Pull both arms evenly";
   }
-  if (torsoLean > 20) {
+
+  if (torsoLean > 40) {
     p.bad = true;
     warning = "Keep your torso upright";
   }
 
   if (p.stage === "start") {
     s.stage = "extended";
-    if (arms.avgElbow < 130) {
+
+    p.startElbowAngle = arms.avgElbow;
+    p.minElbow = arms.avgElbow;
+
+    p.reachedMotion = false;
+    p.reachedGood = false;
+    p.bad = false;
+
+    if (arms.avgElbow < 145) {
       p.stage = "pull";
       p.reachedMotion = true;
     }
   } else {
-    p.reachedMotion = p.reachedMotion || arms.avgElbow < 125;
-    p.reachedGood = p.reachedGood || (
-      arms.avgElbow <= 80 &&
-      arms.avgShoulder <= 105 &&
-      handsAtChest &&
-      elbowsDrivenDown
+    p.minElbow = Math.min(
+      p.minElbow ?? 180,
+      arms.avgElbow
     );
 
-    if (arms.avgElbow >= 160 && arms.avgShoulder >= 135) {
-      const isGood = p.reachedGood && !p.bad;
-      if (p.reachedMotion && commitPrecisionRep(s, "lat_pulldown", now, isGood) && !isGood) {
-        warning = "Finish the pull to upper chest";
+    p.reachedMotion =
+      p.reachedMotion || arms.avgElbow < 150;
+
+    p.reachedGood =
+      p.reachedGood || goodPeak;
+
+    if (extended) {
+      const totalRange =
+        (p.startElbowAngle || 160) -
+        (p.minElbow || 160);
+
+      // تجاهل الحركات الصغيرة
+      if (totalRange < 15 || !p.reachedMotion) {
+        s.precision = null;
+        s.stage = "extended";
+
+        return {
+          handled: true,
+          angle: arms.avgElbow,
+          warning: "",
+        };
       }
+
+      const isGood =
+        (p.reachedGood || totalRange >= 25) &&
+        !p.bad;
+
+      if (
+        commitPrecisionRep(
+          s,
+          "lat_pulldown",
+          now,
+          isGood
+        ) &&
+        !isGood
+      ) {
+        warning = p.bad
+          ? warning || "Bad form"
+          : "Pull down further";
+      }
+
+      // Reset للعدة الجديدة
+      p.reachedMotion = false;
+      p.reachedGood = false;
+      p.bad = false;
+
+      p.startElbowAngle = arms.avgElbow;
+      p.minElbow = arms.avgElbow;
+
       s.stage = "extended";
     } else {
       s.stage = "pull";
     }
   }
 
-  return { handled: true, angle: arms.avgElbow, warning };
+  return {
+    handled: true,
+    angle: arms.avgElbow,
+    warning,
+  };
 }
-
 function updateShoulderPress(lm, s, now) {
   const arms = getArmMetrics(lm);
   const p = getPrecisionState(s, "shoulder_press", now);
-  const torsoLean = getTorsoLean([lm[11].x, lm[11].y], [lm[23].x, lm[23].y]);
-  const handsOverhead = arms.wristY < arms.shoulderY - 0.08;
+
+  const torsoLean = getTorsoLean(
+    [lm[11].x, lm[11].y],
+    [lm[23].x, lm[23].y]
+  );
+
   let warning = "";
 
-  if (arms.elbowDiff > 25 || arms.wristYDiff > 0.12) {
-    p.bad = true;
-    warning = "Press evenly";
-  }
-  if (torsoLean > 20) {
-    p.bad = true;
-    warning = "Keep your torso stacked";
-  }
+  const handsOverhead =
+    arms.wristY < arms.shoulderY - 0.05;
+
+  // وضعية بداية معقولة للـ Shoulder Press
+  const validStartPose =
+    arms.avgElbow >= 80 &&
+    arms.avgElbow <= 130 &&
+    Math.abs(arms.wristY - arms.shoulderY) < 0.15;
 
   if (p.stage === "start") {
     s.stage = "bottom";
-    if (arms.avgElbow > 110) {
-      p.stage = "press";
-      p.reachedMotion = true;
-    }
-  } else {
-    p.reachedMotion = p.reachedMotion || arms.avgElbow > 120;
-    p.reachedGood = p.reachedGood || (arms.avgElbow >= 165 && handsOverhead);
 
-    if (arms.avgElbow <= 90) {
-      const isGood = p.reachedGood && !p.bad;
-      if (p.reachedMotion && commitPrecisionRep(s, "shoulder_press", now, isGood) && !isGood) {
-        warning = "Lock out overhead";
-      }
-      s.stage = "bottom";
-    } else {
-      s.stage = "lockout";
+    p.reachedMotion = false;
+    p.reachedGood = false;
+    p.bad = false;
+
+    p.maxElbow = arms.avgElbow;
+    p.minElbow = arms.avgElbow;
+
+    // لا تبدأ التمرين إلا من الوضعية الصحيحة
+    if (validStartPose) {
+      p.stage = "press";
     }
+
+    return {
+      handled: true,
+      angle: arms.avgElbow,
+      warning: ""
+    };
   }
 
-  return { handled: true, angle: arms.avgElbow, warning };
-}
+  // لو الشخص خرج من وضعية التمرين قبل ما يبدأ فعلياً
+  if (
+    !p.reachedMotion &&
+    !validStartPose &&
+    arms.avgElbow < 140
+  ) {
+    return {
+      handled: true,
+      angle: arms.avgElbow,
+      warning: ""
+    };
+  }
 
+  p.maxElbow = Math.max(
+    p.maxElbow ?? 0,
+    arms.avgElbow
+  );
+
+  p.minElbow = Math.min(
+    p.minElbow ?? 180,
+    arms.avgElbow
+  );
+
+  // لازم يوصل لفرد شبه كامل
+  if (arms.avgElbow >= 150) {
+    p.reachedMotion = true;
+  }
+
+  // Good lockout
+  if (arms.avgElbow >= 160 && handsOverhead) {
+    p.reachedGood = true;
+  }
+
+  // انتهاء العدة بالرجوع للأسفل
+  if (arms.avgElbow <= 110) {
+
+    const motionRange =
+      (p.maxElbow || 0) -
+      (p.minElbow || 180);
+
+    // تجاهل أي حركة عشوائية
+    if (
+      motionRange < 45 ||
+      !p.reachedMotion
+    ) {
+      p.reachedMotion = false;
+      p.reachedGood = false;
+      p.bad = false;
+
+      p.maxElbow = arms.avgElbow;
+      p.minElbow = arms.avgElbow;
+
+      s.stage = "bottom";
+
+      return {
+        handled: true,
+        angle: arms.avgElbow,
+        warning: ""
+      };
+    }
+
+    // فحص الفورم بعد التأكد أنها عدة فعلية
+    if (arms.elbowDiff > 40) {
+      p.bad = true;
+      warning = "Press evenly";
+    }
+
+    if (arms.wristYDiff > 0.20) {
+      p.bad = true;
+      warning = "Keep both arms level";
+    }
+
+    if (torsoLean > 35) {
+      p.bad = true;
+      warning = "Keep your torso stacked";
+    }
+
+    const isGood =
+      p.reachedGood &&
+      !p.bad;
+
+    if (
+      commitPrecisionRep(
+        s,
+        "shoulder_press",
+        now,
+        isGood
+      ) &&
+      !isGood
+    ) {
+      warning =
+        warning ||
+        "Press higher";
+    }
+
+    // Reset
+    p.reachedMotion = false;
+    p.reachedGood = false;
+    p.bad = false;
+
+    p.maxElbow = arms.avgElbow;
+    p.minElbow = arms.avgElbow;
+
+    s.stage = "bottom";
+  } else {
+    s.stage = "lockout";
+  }
+
+  return {
+    handled: true,
+    angle: arms.avgElbow,
+    warning
+  };
+}
 function updateArmCircles(lm, s, now, exerciseName) {
   const arms = getArmMetrics(lm);
   const p = getPrecisionState(s, exerciseName, now);
